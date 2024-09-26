@@ -45,8 +45,8 @@ func playGame() {
 		}
 	}
 
-	input := promptForString("Game over.\nStart a new game? (Y/n) Y", 1, 3, false)
-	if input == "" || strings.EqualFold(input, "y") || strings.EqualFold(input, "yes") {
+	input := promptForString("Game over.\nStart a new game? (Y/n)", 1, 3, false)
+	if strings.EqualFold(input, "y") || strings.EqualFold(input, "yes") {
 		playGame()
 	}
 }
