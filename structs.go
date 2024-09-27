@@ -22,8 +22,10 @@ var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
 }
 
 type gameData struct {
-	players []*playerData
-	APR     float64
+	players        []*playerData
+	APR            float64
+	stocks         []stockData
+	week, numWeeks int
 }
 
 type playerData struct {

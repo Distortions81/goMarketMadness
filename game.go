@@ -46,24 +46,26 @@ func (game *gameData) playGame() {
 	}
 
 	//Prompt for game length
-	numWeeks := promptForInteger("How many weeks?", 12, minWeeks, maxWeeks)
+	game.numWeeks = promptForInteger("How many weeks?", 12, minWeeks, maxWeeks)
 
 	//Init stocks
-	for s := range stockList {
+	game.stocks = defaultStocks
+	for s := range game.stocks {
 		startPrice := RND()*10 + 2
-		stockList[s].setPrice(startPrice)
-		stockList[s].Volatility = RND() * (maxStartVolatility)
+		game.stocks[s].setPrice(startPrice)
+		game.stocks[s].Volatility = RND() * (maxStartVolatility)
 	}
 
 	//Init APR
-	game.APR = genLogRand(maxAPR)
+	game.APR = genLogRand(maxAPR-minAPR) + minAPR
 
 	//Game loop
-	tickStocks()
-	for week := range numWeeks {
+	game.tickStocks()
+	for week := range game.numWeeks {
+		game.week = week
 		fmt.Printf("\n\n*** The %v week has begun! ***\n", numberNames[week])
 		for p, player := range game.players {
-			showStockPrices()
+			game.showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
 			fmt.Printf("Cash: $%0.2f", player.Money)
 			if len(player.Loans) > 0 {
@@ -79,7 +81,7 @@ func (game *gameData) playGame() {
 			fmt.Println("")
 			promptForChoice(game, player, mainChoiceMenu)
 		}
-		tickStocks()
+		game.tickStocks()
 	}
 
 	input := promptForString("Game over.\nStart a new game? (Y/n)", 1, 3, false)

@@ -22,6 +22,8 @@ const (
 	maxStartVolatility   = 10
 	volatilityVolatility = 10
 
-	maxAPR = 30
-	minAPR = 1
+	maxAPR = 19
+	minAPR = 2.5
+
+	loanSizeCap = 1000000.0
 )

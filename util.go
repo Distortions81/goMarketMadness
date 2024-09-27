@@ -50,9 +50,9 @@ func showChange(stock stockData) string {
 	return buf
 }
 
-func showStockPrices() {
+func (game *gameData) showStockPrices() {
 	fmt.Print("Stock prices: ")
-	for s, stock := range stockList {
+	for s, stock := range game.stocks {
 		if s > 0 {
 			fmt.Print(" -- ")
 		}
@@ -60,9 +60,9 @@ func showStockPrices() {
 	}
 }
 
-func tickStocks() {
-	for s := range stockList {
-		stockList[s].tickStock()
+func (game *gameData) tickStocks() {
+	for s := range game.stocks {
+		game.stocks[s].tickStock()
 	}
 }
 
