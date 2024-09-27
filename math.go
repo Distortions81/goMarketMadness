@@ -19,12 +19,6 @@ func genLogRand(max float64) float64 {
 	return float64(max) * math.Log(1+u) / math.Log(volLog)
 }
 
-func calcInterest(principal float64, annualInterestRate float64) float64 {
-	weeklyInterestRate := annualInterestRate / 100 / 52
-	interest := principal * weeklyInterestRate
-	return roundToCent(interest)
-}
-
 func clamp(value, minVal, maxVal int) int {
 	return max(min(value, maxVal), minVal)
 }

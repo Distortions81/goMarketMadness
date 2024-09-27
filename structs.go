@@ -50,6 +50,7 @@ type loanData struct {
 	APR float64
 
 	StartWeek      int
+	TermWeeks      int
 	PaymentHistory []float64
 	Complete       bool
 }

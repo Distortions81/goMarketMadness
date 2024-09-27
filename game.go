@@ -38,6 +38,7 @@ func (game *gameData) playGame() {
 	//Init players, give starting money
 	for p, player := range game.players {
 		player.Number = p + 1
+		player.Loans = []loanData{}
 		if player.Name == "" {
 			prompt := fmt.Sprintf("Name for player #%v", p+1)
 			player.Name = promptForString(prompt, 2, maxPlayerNameLen, true)
@@ -67,18 +68,13 @@ func (game *gameData) playGame() {
 		for p, player := range game.players {
 			game.showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
-			fmt.Printf("Cash: $%0.2f", player.Money)
-			if len(player.Loans) > 0 {
+			if processLoans(player) > 0 {
 				fmt.Printf("\nLoans: ")
 				for l, loan := range player.Loans {
-					if loan.Complete {
-						continue
-					}
-					player.loanCharges()
-					fmt.Printf("Loan #%v: Loan Amount: %0.2f, Remaining: %0.2f, APR: %0.2f%%", l+1, loan.Starting, loan.Principal, loan.APR)
+					fmt.Printf("Loan #%v: Loan Amount: %0.2f, Principal: %0.2f, APR: %0.2f%%", l+1, player.Loans[l].Starting, player.Loans[l].Principal, loan.APR)
 				}
 			}
-			fmt.Println("")
+			fmt.Printf("\nCash: $%0.2f\n", player.Money)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 		game.tickStocks()
