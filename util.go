@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"regexp"
 	"syscall"
 )
 
@@ -63,4 +64,10 @@ func tickStocks() {
 	for s := range stockList {
 		stockList[s].tickStock()
 	}
+}
+
+func NumOnly(str string) string {
+	alphafilter, _ := regexp.Compile("[^0-9.]+")
+	str = alphafilter.ReplaceAllString(str, "")
+	return str
 }

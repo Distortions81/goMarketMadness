@@ -13,4 +13,6 @@ func (loan loanData) totalPaid() float64 {
 func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Current APR %0.2f%%", game.APR)
 	fmt.Printf("How much do you want to borrow?")
+	promptForMoney("How much do you want to borrow?", 1000, 1.00, 1000)
+
 }

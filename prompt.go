@@ -104,7 +104,34 @@ func promptForInteger(prompt string, defaultVal, min, max int) int {
 	return int(value)
 }
 
+func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
+	fmt.Printf("\n%v (%v-%v): (%v) ", prompt, min, max, defaultVal)
+
+	line := readLine()
+	if line == "" {
+		return defaultVal
+	}
+	line = strings.TrimSpace(line)
+	line = NumOnly(line)
+	value, err := strconv.ParseFloat(line, 64)
+	if err != nil {
+		fmt.Println("\nThat isn't a number.")
+		return promptForMoney(prompt, defaultVal, min, max)
+	}
+	value = roundToCent(value)
+	min = roundToCent(min)
+	max = roundToCent(max)
+
+	if value < min || value > max {
+		fmt.Printf("\nMust be a value between $%0.2f and $%0.2f.", min, max)
+		return promptForMoney(prompt, defaultVal, min, max)
+	}
+
+	return value
+}
+
 func promptForChoice(game *gameData, player *playerData, options []choiceData) {
+	fmt.Println("")
 	for i, item := range options {
 		fmt.Printf("%v) %v\n", i+1, item.Name)
 	}
@@ -114,6 +141,7 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) {
 		choice := options[num-1]
 		if len(choice.Submenu) > 0 {
 			promptForChoice(game, player, choice.Submenu)
+			promptForChoice(game, player, options)
 		} else if choice.ChoiceFunc != nil {
 			choice.ChoiceFunc(game, player)
 		}
