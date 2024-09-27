@@ -43,6 +43,8 @@ func showChange(stock stockData) string {
 	buf := fmt.Sprintf("%v: $%0.2f", stock.Name, stock.Price)
 	if stock.Trend == TREND_UP || stock.Trend == TREND_DOWN {
 		buf = buf + fmt.Sprintf(" %v $%0.2f", trendSymbol[stock.Trend], math.Abs(stock.Price-stock.LastPrice))
+	} else {
+		buf = buf + fmt.Sprintf(" %v", trendSymbol[stock.Trend])
 	}
 	return buf
 }

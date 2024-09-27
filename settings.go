@@ -14,7 +14,6 @@ const (
 	maxWeeks         = 25
 	maxPlayerNameLen = 64
 	startingMoney    = 5000
-	gameName         = "M A R K E T  M A D N E S S!"
 
 	volLog = 100
 

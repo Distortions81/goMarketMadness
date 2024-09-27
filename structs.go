@@ -37,10 +37,12 @@ type playerStockData struct {
 }
 
 type loanData struct {
+	StartAmount,
+	Remaining,
+	InterestRate float64
+
 	StartWeek      int
-	Interest       float64
-	PaymentHistory []int
-	Amount         int
+	PaymentHistory []float64
 }
 
 type stockData struct {

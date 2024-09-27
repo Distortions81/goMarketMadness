@@ -26,9 +26,9 @@ func (stock *stockData) tickStock() {
 	change := 1 + (changePercent / 100)
 
 	if rand.Float64() > 0.5 {
-		stock.Price = (stock.LastPrice * change)
+		stock.setPrice(stock.LastPrice * change)
 	} else {
-		stock.Price = (stock.LastPrice * (1 / change))
+		stock.setPrice(stock.LastPrice * (1 / change))
 	}
 
 	if stock.Price < 0.01 {
@@ -36,14 +36,12 @@ func (stock *stockData) tickStock() {
 		stock.Bankrupt = true
 	}
 
-	stock.Price = (math.Round(stock.Price*100) / 100)
-
-	if stock.LastPrice == stock.Price {
-		stock.Trend = TREND_NONE
-	} else if stock.LastPrice > stock.Price {
+	if stock.LastPrice > stock.Price {
 		stock.Trend = TREND_DOWN
-	} else {
+	} else if stock.LastPrice < stock.Price {
 		stock.Trend = TREND_UP
+	} else {
+		stock.Trend = TREND_NONE
 	}
 }
 
@@ -62,4 +60,12 @@ func (stock *stockData) tickVolatility() {
 
 	stock.Volatility = math.Max(stock.Volatility, minVolatility)
 	stock.Volatility = math.Min(stock.Volatility, maxVolatility)
+}
+
+func (stock *stockData) setPrice(price float64) {
+	stock.Price = roundToCent(price)
+}
+
+func roundToCent(price float64) float64 {
+	return (math.Round(price*100) / 100)
 }
