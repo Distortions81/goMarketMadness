@@ -20,16 +20,21 @@ func (game *gameData) playGame() {
 		numPlayers = promptForInteger(1, 1, maxPlayers, "How many players?")
 		game.players = make([]*playerData, numPlayers)
 	} else {
-		if promptForBool(false, "Play again with same %v players?", numPlayers) {
+		if !promptForBool(false, "Play again with same %v players?", numPlayers) {
 			numPlayers = promptForInteger(1, 1, maxPlayers, "How many players?")
 			game.players = make([]*playerData, numPlayers)
 		}
 	}
 
+	oldPlayers := game.players
+
 	//Create players
 	for p, player := range game.players {
 		if player == nil {
 			game.players[p] = &playerData{}
+			if oldPlayers[p] != nil {
+				game.players[p].Name = oldPlayers[p].Name
+			}
 		}
 	}
 
@@ -63,9 +68,11 @@ func (game *gameData) playGame() {
 	for week := range game.numWeeks {
 		game.week = week
 		fmt.Printf("\n*** The %v week has begun! ***\n", numberNames[week])
+		game.tickAPR()
+
 		for p, player := range game.players {
 			game.showStockPrices()
-			fmt.Printf("Player #%v: (%v), it is your turn!\n", p+1, player.Name)
+			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
 			processLoans(game.players[p])
 			fmt.Printf("Cash: $%0.2f\n", player.Money)
 			promptForChoice(game, player, mainChoiceMenu)
@@ -73,7 +80,7 @@ func (game *gameData) playGame() {
 		game.tickStocks()
 	}
 
-	if promptForBool(false, "Game over!\nStart a new game") {
+	if promptForBool(false, "Game over!\nPlay again?") {
 		game.playGame()
 	}
 }

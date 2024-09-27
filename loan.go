@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 func takeLoan(game *gameData, player *playerData) {
@@ -150,4 +151,19 @@ func processLoans(player *playerData) int {
 	}
 
 	return total
+}
+
+func (game *gameData) tickAPR() {
+	changePercent := 2 * volatilityAPR * RND()
+	change := 1 + (changePercent / 100)
+	if rand.Float64() > 0.5 {
+		game.APR = (game.APR * change)
+	} else {
+		game.APR = (game.APR * (1 / change))
+	}
+
+	game.APR = math.Max(game.APR, minAPR)
+	game.APR = math.Min(game.APR, maxAPR)
+
+	fmt.Printf("New interest rate: %0.2f%%\n", game.APR)
 }
