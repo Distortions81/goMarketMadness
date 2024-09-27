@@ -67,9 +67,9 @@ func (stock *stockData) setPrice(price float64) {
 }
 
 func roundToCent(price float64) float64 {
-	return (math.Ceil(price*100) / 100)
+	return (math.Round(price*100) / 100)
 }
 
 func roundToDollar(price float64) float64 {
-	return (math.Ceil(price*10000) / 10000)
+	return (math.Floor(price*10000) / 10000)
 }
