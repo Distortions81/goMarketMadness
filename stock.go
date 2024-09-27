@@ -35,6 +35,16 @@ func (stock *stockData) tickStock() {
 		stock.Price = 0
 		stock.Bankrupt = true
 	}
+
+	stock.Price = (math.Round(stock.Price*100) / 100)
+
+	if stock.LastPrice == stock.Price {
+		stock.Trend = TREND_NONE
+	} else if stock.LastPrice > stock.Price {
+		stock.Trend = TREND_DOWN
+	} else {
+		stock.Trend = TREND_UP
+	}
 }
 
 func (stock *stockData) tickVolatility() {

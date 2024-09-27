@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -36,4 +37,28 @@ func handleExit() {
 func fixTerm() {
 	exec.Command("stty", "-F", "/dev/tty", "sane").Run()
 	fmt.Println("\nGame will now close.")
+}
+
+func showChange(stock stockData) string {
+	buf := fmt.Sprintf("%v: $%0.2f", stock.Name, stock.Price)
+	if stock.Trend == TREND_UP || stock.Trend == TREND_DOWN {
+		buf = buf + fmt.Sprintf(" %v $%0.2f", trendSymbol[stock.Trend], math.Abs(stock.Price-stock.LastPrice))
+	}
+	return buf
+}
+
+func showStockPrices() {
+	fmt.Print("Stock prices: ")
+	for s, stock := range stockList {
+		if s > 0 {
+			fmt.Print(" -- ")
+		}
+		fmt.Printf(showChange(stock))
+	}
+}
+
+func tickStocks() {
+	for s := range stockList {
+		stockList[s].tickStock()
+	}
 }

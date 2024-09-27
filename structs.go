@@ -8,6 +8,19 @@
 
 package main
 
+const (
+	TREND_NONE = iota
+	TREND_UP
+	TREND_DOWN
+	TREND_MAX
+)
+
+var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
+	"→",
+	"↑",
+	"↓",
+}
+
 type playerData struct {
 	Name   string
 	Number int
@@ -41,4 +54,6 @@ type stockData struct {
 
 	PriceHistory      []float64
 	VolatilityHistory []float64
+
+	Trend int
 }
