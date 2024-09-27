@@ -16,7 +16,8 @@ func main() {
 	setupTerm()
 
 	CallClear()
-	fmt.Println("Press any key to continue")
+	fmt.Println("Market Madness!")
+	fmt.Println("Press any key to begin.")
 	anyKey()
 
 	playGame()

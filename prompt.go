@@ -109,6 +109,18 @@ func promptForChoice(player playerData, options []choiceData) {
 		fmt.Printf("%v) %v\n", i+1, item.Name)
 	}
 
-	choice := promptForInteger("Choice", 1, 1, len(options))
-	fmt.Printf("Choice was %v.\n", choice)
+	num := promptForInteger("Choice", 1, 1, len(options))
+	if num < len(options) {
+		choice := options[num-1]
+		if len(choice.Submenu) > 0 {
+			fmt.Println("submenu")
+			promptForChoice(player, choice.Submenu)
+		} else if choice.ChoiceFunc != nil {
+			fmt.Println("func")
+			choice.ChoiceFunc(player)
+		}
+	} else {
+		fmt.Println("That isn't a valid choice!")
+		promptForChoice(player, options)
+	}
 }

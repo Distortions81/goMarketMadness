@@ -40,7 +40,7 @@ func playGame() {
 	for week := range numWeeks {
 		fmt.Printf("\n*** The %v week has begun! ***\n", numberNames[week])
 		for p, player := range players {
-			fmt.Printf("Player #%v: (%v), it is your turn:\n", p+1, player.Name)
+			fmt.Printf("Player #%v: (%v), it is your turn!\n", p+1, player.Name)
 			promptForChoice(player, mainChoiceMenu)
 		}
 	}

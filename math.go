@@ -14,10 +14,8 @@ import (
 )
 
 func genLogRand(max float64) float64 {
-	// Generate a random number between 0 and 1
 	u := rand.Float64()
 
-	// Apply logarithmic transformation and scale to the desired range
 	return float64(max) * math.Log(1+u) / math.Log(volLog)
 }
 
