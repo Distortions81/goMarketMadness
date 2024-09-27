@@ -67,10 +67,10 @@ func promptForString(defaultAnswer string, min, max int, confirm bool, format st
 	fmt.Println()
 	lLen := len(line)
 	if lLen < min {
-		fmt.Printf("You must supply at least %v characters.", min)
+		fmt.Printf("You must supply at least %v characters.\n", min)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	} else if lLen > max {
-		fmt.Printf("That is too long, must be less than %v characters.", max)
+		fmt.Printf("That is too long, must be less than %v characters.\n", max)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	}
 
@@ -97,6 +97,10 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	}
 	result := promptForString("", 0, 3, false, format+question, args...)
 
+	if !defaultYes && result == "" {
+		fmt.Println("That isn't a valid option, type yes/no or y/n.")
+		return promptForBool(defaultYes, format, args...)
+	}
 	return (defaultYes && result == "") || strings.EqualFold(result, "y") || strings.EqualFold(result, "yes")
 }
 

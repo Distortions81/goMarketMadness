@@ -52,7 +52,7 @@ func (game *gameData) playGame() {
 	for s := range game.stocks {
 		startPrice := RND()*10 + 2
 		game.stocks[s].setPrice(startPrice)
-		game.stocks[s].Volatility = RND() * (maxStartVolatility)
+		game.stocks[s].Volatility = RND() * (maxVolatility)
 	}
 
 	//Init APR
@@ -66,7 +66,7 @@ func (game *gameData) playGame() {
 		for p, player := range game.players {
 			game.showStockPrices()
 			fmt.Printf("Player #%v: (%v), it is your turn!\n", p+1, player.Name)
-			processLoans(player)
+			processLoans(game.players[p])
 			fmt.Printf("Cash: $%0.2f\n", player.Money)
 			promptForChoice(game, player, mainChoiceMenu)
 		}

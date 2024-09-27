@@ -81,6 +81,8 @@ func (player *playerData) loanCharges() {
 
 		player.debit(payment)
 
+		//handle bankrupt
+
 		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
 
 		principalPayment := payment - interestForWeek
@@ -137,9 +139,10 @@ func calcTotalInterest(loan loanData) float64 {
 
 func processLoans(player *playerData) int {
 
+	player.loanCharges()
+
 	total := 0
 	for l := range player.Loans {
-		player.loanCharges()
 		if player.Loans[l].Complete {
 			continue
 		}

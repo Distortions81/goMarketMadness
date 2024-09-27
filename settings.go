@@ -15,11 +15,10 @@ const (
 	maxPlayerNameLen = 64
 	startingMoney    = 5000
 
-	volLog = 100
+	randLogarithm = 100
 
-	minVolatility        = 1.0
-	maxVolatility        = 20.0
-	maxStartVolatility   = 10
+	minVolatility        = 3.0
+	maxVolatility        = 10.0
 	volatilityVolatility = 10
 
 	maxAPR = 19

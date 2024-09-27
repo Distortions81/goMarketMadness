@@ -16,7 +16,7 @@ import (
 func genLogRand(max float64) float64 {
 	u := rand.Float64()
 
-	return float64(max) * math.Log(1+u) / math.Log(volLog)
+	return float64(max) * math.Log(1+u) / math.Log(randLogarithm)
 }
 
 func clamp(value, minVal, maxVal int) int {
