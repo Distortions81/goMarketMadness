@@ -69,7 +69,7 @@ func (game *gameData) playGame() {
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
 			fmt.Printf("Cash: $%0.2f", player.Money)
 			if len(player.Loans) > 0 {
-				fmt.Printf("Loans: ")
+				fmt.Printf("\nLoans: ")
 				for l, loan := range player.Loans {
 					if loan.Complete {
 						continue
