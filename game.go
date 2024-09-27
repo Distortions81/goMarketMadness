@@ -46,7 +46,7 @@ func (game *gameData) playGame() {
 			pName := fmt.Sprintf("Player #%v", player.Number)
 			player.Name = promptForString(pName, 2, maxPlayerNameLen, true, "Name for player #%v:", p+1)
 		}
-		player.Money = startingMoney
+		player.Balance = startingMoney
 	}
 
 	//Prompt for game length
@@ -74,7 +74,7 @@ func (game *gameData) playGame() {
 			game.showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
 			processLoans(game.players[p])
-			fmt.Printf("Cash: $%0.2f\n", player.Money)
+			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 		game.tickStocks()

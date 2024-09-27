@@ -18,7 +18,7 @@ type gameData struct {
 type playerData struct {
 	Name     string
 	Number   int
-	Money    float64
+	Balance  float64
 	Bankrupt bool
 
 	Stocks []playerStockData

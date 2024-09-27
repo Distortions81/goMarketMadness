@@ -1,16 +1,16 @@
 package main
 
 func (player *playerData) credit(income float64) {
-	player.Money = roundToCent(player.Money + income)
+	player.Balance = roundToCent(player.Balance + income)
 }
 
 func (player *playerData) debit(charge float64) bool {
-	newAmount := roundToCent(player.Money - charge)
+	newAmount := roundToCent(player.Balance - charge)
 
 	if newAmount <= 0 {
 		player.Bankrupt = true
 		return false
 	}
-	player.Money = newAmount
+	player.Balance = newAmount
 	return true
 }

@@ -20,17 +20,17 @@ const (
 	maxPlayerNameLen = 64
 	startingMoney    = 5000
 
-	randLogarithm = 100
-
+	randLogarithm        = 100
 	minVolatility        = 3.0
 	maxVolatility        = 10.0
 	volatilityVolatility = 10
 	volatilityAPR        = 7
+	maxLoanCount         = 10
+	maxAPR               = 19
+	minAPR               = 2.5
 
-	maxAPR = 19
-	minAPR = 2.5
-
-	loanSizeCap = 1000000.0
+	maxLoanSize = 1000000.0
+	minLoanSize = 1000
 )
 
 var (

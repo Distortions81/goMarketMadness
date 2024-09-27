@@ -118,7 +118,7 @@ func promptForInteger(defaultVal, min, max int, prompt string) int {
 		return promptForInteger(defaultVal, min, max, prompt)
 	}
 	if int(value) < min || int(value) > max {
-		fmt.Printf("Must be a value between %v and %v.", min, max)
+		fmt.Printf("Must be a value between %v and %v.\n", min, max)
 		return promptForInteger(defaultVal, min, max, prompt)
 	}
 
@@ -145,7 +145,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 	max = roundToCent(max)
 
 	if value < min || value > max {
-		fmt.Printf("Must be a value between $%0.2f and $%0.2f.", min, max)
+		fmt.Printf("Must be a value between $%0.2f and $%0.2f.\n", min, max)
 		return promptForMoney(prompt, defaultVal, min, max)
 	}
 

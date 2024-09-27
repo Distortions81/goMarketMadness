@@ -6,11 +6,51 @@ import (
 	"math/rand"
 )
 
+func checkBalance(game *gameData, player *playerData) {
+	fmt.Printf("Available balance: $%0.2f\n", player.Balance)
+}
+
+func payLoan(game *gameData, player *playerData) {
+	numLoans := player.getCount()
+	if numLoans == 0 {
+		fmt.Println("You don't have any loans.")
+		return
+	}
+
+	choice := 1
+	if numLoans > 1 {
+		for l, loan := range player.Loans {
+			if loan.Complete {
+				continue
+			}
+			printLoan(l, loan)
+		}
+		choice = promptForInteger(1, 1, numLoans, "What loan do you want to make a payment on?")
+	}
+	loan := player.Loans[choice-1]
+	if loan.Principal <= 0 || loan.Complete {
+		fmt.Println("That loan is already paid off.")
+		return
+	}
+	printLoan(choice, loan)
+	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, player.Balance))
+	player.debit(amount)
+	loan.makePayment(amount)
+	fmt.Printf("Made payment of $%0.2f\n", amount)
+	loan.PaymentHistory = append(loan.PaymentHistory, amount)
+}
+
+func printLoan(num int, loan loanData) {
+	fmt.Printf("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%\n", num, loan.Starting, loan.Principal, loan.APR)
+}
+
 func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Current APR %0.2f%%\n", game.APR)
 
+	numLoans := player.getCount()
+
 	maxLoan := calcMaxLoan(game, player)
-	if maxLoan < 1.00 {
+	if maxLoan < 1.00 || numLoans > maxLoanCount {
 		fmt.Print("Sorry, the bank refuses to loan you any money.")
 		return
 	}
@@ -52,7 +92,7 @@ func calcMaxLoan(game *gameData, player *playerData) float64 {
 	}
 
 	stockWeight := 0.60
-	totalAssets := player.Money + (stockAssets * stockWeight)
+	totalAssets := player.Balance + (stockAssets * stockWeight)
 	maxLoanAmount := totalAssets - debt
 	maxLoanAmount = math.Max(maxLoanAmount, 0.0)
 
@@ -88,7 +128,7 @@ func (player *playerData) loanCharges() {
 
 		principalPayment := payment - interestForWeek
 
-		player.Loans[l].Principal -= principalPayment
+		player.Loans[l].makePayment(principalPayment)
 
 		fmt.Printf("Loan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
 
@@ -165,5 +205,26 @@ func (game *gameData) tickAPR() {
 	game.APR = math.Max(game.APR, minAPR)
 	game.APR = math.Min(game.APR, maxAPR)
 
-	fmt.Printf("New interest rate: %0.2f%%\n", game.APR)
+	//fmt.Printf("New interest rate: %0.2f%%\n", game.APR)
+}
+
+func (player *playerData) getCount() int {
+	count := 0
+	for _, loan := range player.Loans {
+		if loan.Complete {
+			continue
+		}
+		count++
+	}
+
+	return count
+}
+
+func (loan *loanData) makePayment(amount float64) {
+	loan.Principal -= amount
+	loan.PaymentHistory = append(loan.PaymentHistory, amount)
+	if loan.Principal <= 0 {
+		loan.Principal = 0
+		loan.Complete = true
+	}
 }

@@ -19,8 +19,8 @@ var mainChoiceMenu []choiceData = []choiceData{
 
 var mainBankChoices []choiceData = []choiceData{
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
-	{Name: "Make a payment on a loan"},
-	{Name: "See balance"},
+	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
+	{Name: "See balance", ChoiceFunc: checkBalance},
 }
 
 type choiceData struct {
