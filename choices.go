@@ -31,5 +31,5 @@ type choiceData struct {
 }
 
 func endTurn(game *gameData, player *playerData) {
-	fmt.Printf("\nPlayer #%v: (%v) has ended their turn.\n", player.Number, player.Name)
+	fmt.Printf("Player #%v: (%v) has ended their turn.\n", player.Number, player.Name)
 }

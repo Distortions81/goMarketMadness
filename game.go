@@ -10,7 +10,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (game *gameData) playGame() {
@@ -18,12 +17,11 @@ func (game *gameData) playGame() {
 	//Prompt to create players
 	numPlayers := len(game.players)
 	if game.players == nil {
-		numPlayers = promptForInteger("How many players?", 1, 1, maxPlayers)
+		numPlayers = promptForInteger(1, 1, maxPlayers, "How many players?")
 		game.players = make([]*playerData, numPlayers)
 	} else {
-		result := promptForString("Play again with same players?", 1, 3, false)
-		if strings.EqualFold(result, "n") || strings.EqualFold(result, "no") {
-			numPlayers = promptForInteger("How many players?", 1, 1, maxPlayers)
+		if promptForBool(false, "Play again with same %v players?", numPlayers) {
+			numPlayers = promptForInteger(1, 1, maxPlayers, "How many players?")
 			game.players = make([]*playerData, numPlayers)
 		}
 	}
@@ -40,14 +38,14 @@ func (game *gameData) playGame() {
 		player.Number = p + 1
 		player.Loans = []loanData{}
 		if player.Name == "" {
-			prompt := fmt.Sprintf("Name for player #%v", p+1)
-			player.Name = promptForString(prompt, 2, maxPlayerNameLen, true)
+			pName := fmt.Sprintf("Player #%v", player.Number)
+			player.Name = promptForString(pName, 2, maxPlayerNameLen, true, "Name for player #%v:", p+1)
 		}
 		player.Money = startingMoney
 	}
 
 	//Prompt for game length
-	game.numWeeks = promptForInteger("How many weeks?", 12, minWeeks, maxWeeks)
+	game.numWeeks = promptForInteger(12, minWeeks, maxWeeks, "How many weeks?")
 
 	//Init stocks
 	game.stocks = defaultStocks
@@ -64,24 +62,18 @@ func (game *gameData) playGame() {
 	game.tickStocks()
 	for week := range game.numWeeks {
 		game.week = week
-		fmt.Printf("\n\n*** The %v week has begun! ***\n", numberNames[week])
+		fmt.Printf("\n*** The %v week has begun! ***\n", numberNames[week])
 		for p, player := range game.players {
 			game.showStockPrices()
-			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
-			if processLoans(player) > 0 {
-				fmt.Printf("\nLoans: ")
-				for l, loan := range player.Loans {
-					fmt.Printf("Loan #%v: Loan Amount: %0.2f, Principal: %0.2f, APR: %0.2f%%", l+1, player.Loans[l].Starting, player.Loans[l].Principal, loan.APR)
-				}
-			}
+			fmt.Printf("Player #%v: (%v), it is your turn!\n", p+1, player.Name)
+			processLoans(player)
 			fmt.Printf("Cash: $%0.2f\n", player.Money)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 		game.tickStocks()
 	}
 
-	input := promptForString("Game over.\nStart a new game? (Y/n)", 1, 3, false)
-	if strings.EqualFold(input, "y") || strings.EqualFold(input, "yes") {
+	if promptForBool(false, "Game over!\nStart a new game") {
 		game.playGame()
 	}
 }

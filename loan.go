@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	"math"
-	"strings"
 )
 
 func takeLoan(game *gameData, player *playerData) {
-	fmt.Printf("\nCurrent APR %0.2f%%\n", game.APR)
+	fmt.Printf("Current APR %0.2f%%\n", game.APR)
 
 	maxLoan := calcMaxLoan(game, player)
 	if maxLoan < 1.00 {
@@ -16,7 +15,7 @@ func takeLoan(game *gameData, player *playerData) {
 	}
 
 	maxLoan = roundToDollar(maxLoan)
-	fmt.Printf("Maximum loan the bank will offer $%0.2f", maxLoan)
+	fmt.Printf("Maximum loan the bank will offer $%0.2f\n", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := game.numWeeks - game.week - 1
@@ -25,21 +24,16 @@ func takeLoan(game *gameData, player *playerData) {
 		return
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
-	loanTerm := promptForInteger(prompt, remainingWeeks, 1, remainingWeeks)
+	loanTerm := promptForInteger(remainingWeeks, 1, remainingWeeks, prompt)
 
 	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.week, TermWeeks: loanTerm}
 	totalInterest := calcTotalInterest(newLoan)
 	payments := calcPayment(newLoan)
 
-	confirmLoan := fmt.Sprintf("Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept (y/n)", totalInterest, loanTerm, payments)
-	response := promptForString(confirmLoan, 1, 3, false)
-	if strings.EqualFold(response, "n") || strings.EqualFold(response, "no") {
-		return
+	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
+		player.Loans = append(player.Loans, newLoan)
+		player.credit(loanAmount)
 	}
-
-	player.Loans = append(player.Loans, newLoan)
-
-	player.credit(loanAmount)
 }
 
 func calcMaxLoan(game *gameData, player *playerData) float64 {
@@ -93,7 +87,7 @@ func (player *playerData) loanCharges() {
 
 		player.Loans[l].Principal -= principalPayment
 
-		fmt.Printf("\nLoan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
+		fmt.Printf("Loan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
 
 		if player.Loans[l].Principal <= 0.01 {
 			player.Loans[l].Principal = 0

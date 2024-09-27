@@ -37,7 +37,7 @@ func handleExit() {
 
 func fixTerm() {
 	exec.Command("stty", "-F", "/dev/tty", "sane").Run()
-	fmt.Println("\nGame will now close.")
+	fmt.Println("Game will now close.")
 }
 
 func showChange(stock stockData) string {
@@ -58,6 +58,7 @@ func (game *gameData) showStockPrices() {
 		}
 		fmt.Printf(showChange(stock))
 	}
+	fmt.Println()
 }
 
 func (game *gameData) tickStocks() {
