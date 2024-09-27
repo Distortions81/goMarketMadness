@@ -113,10 +113,8 @@ func promptForChoice(player playerData, options []choiceData) {
 	if num < len(options) {
 		choice := options[num-1]
 		if len(choice.Submenu) > 0 {
-			fmt.Println("submenu")
 			promptForChoice(player, choice.Submenu)
 		} else if choice.ChoiceFunc != nil {
-			fmt.Println("func")
 			choice.ChoiceFunc(player)
 		}
 	} else {
