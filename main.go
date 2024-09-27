@@ -20,5 +20,6 @@ func main() {
 	fmt.Println("Press any key to begin.")
 	anyKey()
 
-	playGame()
+	newGame := &gameData{}
+	newGame.playGame()
 }

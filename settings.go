@@ -21,4 +21,7 @@ const (
 	maxVolatility        = 20.0
 	maxStartVolatility   = 10
 	volatilityVolatility = 10
+
+	maxAPR = 30
+	minAPR = 1
 )

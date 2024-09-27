@@ -18,18 +18,18 @@ var mainChoiceMenu []choiceData = []choiceData{
 }
 
 var mainBankChoices []choiceData = []choiceData{
-	{Name: "Take out a loan"},
+	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan"},
 	{Name: "See balance"},
 }
 
 type choiceData struct {
 	Name       string
-	ChoiceFunc func(player playerData)
+	ChoiceFunc func(game *gameData, player *playerData)
 	Submenu    []choiceData
 	Enabled    bool
 }
 
-func endTurn(player playerData) {
+func endTurn(game *gameData, player *playerData) {
 	fmt.Printf("\nPlayer #%v: (%v) has ended their turn.\n", player.Number, player.Name)
 }

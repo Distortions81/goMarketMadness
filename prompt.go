@@ -104,7 +104,7 @@ func promptForInteger(prompt string, defaultVal, min, max int) int {
 	return int(value)
 }
 
-func promptForChoice(player playerData, options []choiceData) {
+func promptForChoice(game *gameData, player *playerData, options []choiceData) {
 	for i, item := range options {
 		fmt.Printf("%v) %v\n", i+1, item.Name)
 	}
@@ -113,12 +113,12 @@ func promptForChoice(player playerData, options []choiceData) {
 	if num < len(options) {
 		choice := options[num-1]
 		if len(choice.Submenu) > 0 {
-			promptForChoice(player, choice.Submenu)
+			promptForChoice(game, player, choice.Submenu)
 		} else if choice.ChoiceFunc != nil {
-			choice.ChoiceFunc(player)
+			choice.ChoiceFunc(game, player)
 		}
 	} else {
 		fmt.Println("That isn't a valid choice!")
-		promptForChoice(player, options)
+		promptForChoice(game, player, options)
 	}
 }

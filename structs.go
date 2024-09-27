@@ -21,6 +21,11 @@ var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
 	"↓",
 }
 
+type gameData struct {
+	players []*playerData
+	APR     float64
+}
+
 type playerData struct {
 	Name     string
 	Number   int
