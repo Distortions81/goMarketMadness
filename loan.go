@@ -16,6 +16,7 @@ func takeLoan(game *gameData, player *playerData) {
 	}
 
 	maxLoan = roundToCent(maxLoan)
+	fmt.Printf("Maximum loan the bank will offer $%0.2f", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := game.numWeeks - game.week - 2
@@ -28,7 +29,7 @@ func takeLoan(game *gameData, player *playerData) {
 
 	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.week, TermWeeks: loanTerm}
 	totalInterest := calcTotalInterest(newLoan)
-	payments := calcPayment(newLoan) + calcInterest(newLoan)
+	payments := calcPayment(newLoan)
 
 	confirmLoan := fmt.Sprintf("Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept (y/n)?", totalInterest, loanTerm, payments)
 	response := promptForString(confirmLoan, 1, 3, false)
@@ -69,24 +70,23 @@ func (player *playerData) loanCharges() {
 			continue
 		}
 		payment := calcPayment(loan)
-		interest := calcInterest(loan)
 		if loan.Principal <= 0 || payment <= 0 {
 			player.Loans[l].Complete = true
 			player.Loans[l].Principal = 0
 			continue
 		}
 
-		player.debit(payment + interest)
-		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
-		player.Loans[l].Principal -= payment
-		fmt.Printf("\nLoan #%v: Payment: $%0.2f\n", l+1, payment)
-	}
-}
+		player.debit(payment)
 
-func calcInterest(loan loanData) float64 {
-	weeklyInterestRate := loan.APR / 100 / 52
-	interest := loan.Principal * weeklyInterestRate * float64(loan.TermWeeks)
-	return roundToCent(interest)
+		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
+
+		interestForWeek := loan.Principal * (loan.APR / 100 / 52)
+		principalPayment := payment - interestForWeek
+
+		player.Loans[l].Principal -= principalPayment
+
+		fmt.Printf("\nLoan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
+	}
 }
 
 func calcPayment(loan loanData) float64 {
@@ -125,15 +125,6 @@ func calcTotalInterest(loan loanData) float64 {
 	}
 
 	return roundToCent(totalInterest)
-}
-
-func popLoanByIndex(loans []loanData, index int) ([]loanData, error) {
-	if index < 0 || index >= len(loans) {
-		return loans, fmt.Errorf("index out of range")
-	}
-
-	// Remove the loan by slicing out the element at the given index
-	return append(loans[:index], loans[index+1:]...), nil
 }
 
 func processLoans(player *playerData) int {
