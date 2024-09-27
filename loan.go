@@ -15,7 +15,7 @@ func takeLoan(game *gameData, player *playerData) {
 		return
 	}
 
-	maxLoan = roundToCent(maxLoan)
+	maxLoan = roundToDollar(maxLoan)
 	fmt.Printf("Maximum loan the bank will offer $%0.2f", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
