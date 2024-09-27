@@ -74,7 +74,7 @@ func (game *gameData) playGame() {
 					fmt.Printf("Loan #%v: Loan Amount: %0.2f, Principal: %0.2f, APR: %0.2f%%", l+1, player.Loans[l].Starting, player.Loans[l].Principal, loan.APR)
 				}
 			}
-			fmt.Printf("\nCash: $%0.2f\n", player.Money)
+			fmt.Printf("Cash: $%0.2f\n", player.Money)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 		game.tickStocks()

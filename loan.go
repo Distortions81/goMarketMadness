@@ -19,7 +19,7 @@ func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Maximum loan the bank will offer $%0.2f", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
-	remainingWeeks := game.numWeeks - game.week - 2
+	remainingWeeks := game.numWeeks - game.week - 1
 	if remainingWeeks <= 0 {
 		fmt.Println("There isn't enough time left in the game for a loan!")
 		return
@@ -31,7 +31,7 @@ func takeLoan(game *gameData, player *playerData) {
 	totalInterest := calcTotalInterest(newLoan)
 	payments := calcPayment(newLoan)
 
-	confirmLoan := fmt.Sprintf("Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept (y/n)?", totalInterest, loanTerm, payments)
+	confirmLoan := fmt.Sprintf("Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept (y/n)", totalInterest, loanTerm, payments)
 	response := promptForString(confirmLoan, 1, 3, false)
 	if strings.EqualFold(response, "n") || strings.EqualFold(response, "no") {
 		return
@@ -69,7 +69,16 @@ func (player *playerData) loanCharges() {
 		if loan.Complete {
 			continue
 		}
+
 		payment := calcPayment(loan)
+
+		weeklyInterestRate := loan.APR / 100 / 52
+		interestForWeek := loan.Principal * weeklyInterestRate
+
+		if loan.Principal <= payment {
+			payment = loan.Principal + interestForWeek
+		}
+
 		if loan.Principal <= 0 || payment <= 0 {
 			player.Loans[l].Complete = true
 			player.Loans[l].Principal = 0
@@ -80,12 +89,17 @@ func (player *playerData) loanCharges() {
 
 		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
 
-		interestForWeek := loan.Principal * (loan.APR / 100 / 52)
 		principalPayment := payment - interestForWeek
 
 		player.Loans[l].Principal -= principalPayment
 
 		fmt.Printf("\nLoan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
+
+		if player.Loans[l].Principal <= 0.01 {
+			player.Loans[l].Principal = 0
+			player.Loans[l].Complete = true
+			fmt.Printf("Loan #%v is fully paid off.\n", l+1)
+		}
 	}
 }
 

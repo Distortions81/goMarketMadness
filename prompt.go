@@ -73,7 +73,7 @@ func promptForString(prompt string, min, max int, confirm bool) string {
 	}
 
 	if confirm {
-		conPrompt := fmt.Sprintf("'%v' Confirm? (Y/N) (yes)", line)
+		conPrompt := fmt.Sprintf("'%v' Confirm? (Y/n)", line)
 		input := promptForString(conPrompt, 0, 3, false)
 		if input == "" || strings.EqualFold(input, "y") || strings.EqualFold(input, "yes") {
 			return line
