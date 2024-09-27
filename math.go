@@ -22,7 +22,7 @@ func genLogRand(max float64) float64 {
 func calcInterest(principal float64, annualInterestRate float64) float64 {
 	weeklyInterestRate := annualInterestRate / 100 / 52
 	interest := principal * weeklyInterestRate
-	return interest
+	return roundToCent(interest)
 }
 
 func clamp(value, minVal, maxVal int) int {

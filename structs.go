@@ -22,9 +22,10 @@ var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
 }
 
 type playerData struct {
-	Name   string
-	Number int
-	Money  int
+	Name     string
+	Number   int
+	Money    float64
+	Bankrupt bool
 
 	Stocks []playerStockData
 	Loans  []loanData
@@ -37,12 +38,13 @@ type playerStockData struct {
 }
 
 type loanData struct {
-	StartAmount,
-	Remaining,
-	InterestRate float64
+	Starting,
+	Principal,
+	APR float64
 
 	StartWeek      int
 	PaymentHistory []float64
+	Complete       bool
 }
 
 type stockData struct {

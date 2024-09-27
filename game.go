@@ -42,11 +42,15 @@ func playGame() {
 		for p, player := range players {
 			showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
-			fmt.Printf("Cash: $0.2f", player.Money)
+			fmt.Printf("Cash: $%0.2f", player.Money)
 			if len(player.Loans) > 0 {
 				fmt.Printf("Loans: ")
 				for l, loan := range player.Loans {
-					fmt.Printf("Loan #%v: Total: %0.2f, Remaining: %0.2f, Interest Rate: %0.2f%%", l+1, loan.StartAmount, loan.Remaining, loan.InterestRate)
+					if loan.Complete {
+						continue
+					}
+					player.loanCharges()
+					fmt.Printf("Loan #%v: Loan Amount: %0.2f, Remaining: %0.2f, APR: %0.2f%%", l+1, loan.Starting, loan.Principal, loan.APR)
 				}
 			}
 			fmt.Println("")
