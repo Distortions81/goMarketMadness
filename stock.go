@@ -77,3 +77,29 @@ func floorToCent(price float64) float64 {
 func roundToDollar(price float64) float64 {
 	return (math.Floor(price*10000) / 10000)
 }
+
+func (player *playerData) creditStock(game *gameData, stockNum, numShares int) {
+	for s, stock := range player.Stocks {
+		if stock.StockID == stockNum {
+			player.Stocks[s].Shares += numShares
+			return
+		}
+	}
+
+	newStock := playerStockData{Name: game.stocks[stockNum].Name, StockID: stockNum, Shares: numShares}
+	player.Stocks = append(player.Stocks, newStock)
+}
+
+func (player *playerData) debitStock(stockNum, numShares int) bool {
+	for s, stock := range player.Stocks {
+		if stock.StockID == stockNum {
+			if player.Stocks[s].Shares < numShares {
+				player.Stocks[s].Shares -= numShares
+				return true
+			}
+			return false
+		}
+	}
+
+	return false
+}

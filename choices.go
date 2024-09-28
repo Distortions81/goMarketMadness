@@ -72,7 +72,7 @@ func buyShares(game *gameData, player *playerData) {
 	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, game.stocks[choice].Name, dollarValue) {
 		player.debit(dollarValue)
 		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, player.Balance)
-		//add stock to player
+		player.creditStock(game, choice, numShares)
 	}
 }
 
