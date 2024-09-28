@@ -15,7 +15,7 @@ import (
 
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
-	{Name: "Buy/Sell stock", Submenu: buySellChoices},
+	{Name: "Stocks", Submenu: stockChoices},
 	{Name: "Banking", Submenu: mainBankChoices},
 	{Name: "Leave the table"},
 }
@@ -26,9 +26,10 @@ var mainBankChoices []choiceData = []choiceData{
 	{Name: "See balance", ChoiceFunc: checkBalance},
 }
 
-var buySellChoices []choiceData = []choiceData{
+var stockChoices []choiceData = []choiceData{
 	{Name: "Buy shares", ChoiceFunc: buyShares},
 	{Name: "Sell shares", ChoiceFunc: sellShares},
+	{Name: "List owned shares", ChoiceFunc: listShares},
 	{Name: "Go back"},
 }
 
@@ -77,4 +78,22 @@ func buyShares(game *gameData, player *playerData) {
 }
 
 func sellShares(game *gameData, player *playerData) {
+}
+
+func listShares(game *gameData, player *playerData) {
+
+	count := 0
+	fmt.Println()
+	for _, stock := range player.Stocks {
+		if stock.Shares > 0 {
+			fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
+				stock.Name, stock.Shares, float64(stock.Shares)*game.stocks[stock.StockID].Price)
+			count++
+		}
+	}
+
+	if count == 0 {
+		fmt.Println("You don't have any stock shares at the moment.")
+	}
+	fmt.Println()
 }
