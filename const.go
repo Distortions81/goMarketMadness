@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	maxPlayers       = 10
-	minWeeks         = 2
-	maxWeeks         = 25
-	maxPlayerNameLen = 64
-	startingMoney    = 5000
+	maxPlayers    = 10
+	minWeeks      = 2
+	maxWeeks      = 25
+	maxNameLen    = 64
+	startingMoney = 5000
 
 	randLogarithm        = 100
 	minVolatility        = 3.0
@@ -26,6 +26,7 @@ const (
 	volatilityVolatility = 10
 	volatilityAPR        = 7
 	maxLoanCount         = 10
+	maxShares            = 10000
 	maxAPR               = 19
 	minAPR               = 2.5
 

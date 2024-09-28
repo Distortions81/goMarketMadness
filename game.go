@@ -46,7 +46,7 @@ func (game *gameData) playGame() {
 		player.Loans = []loanData{}
 		if player.Name == "" {
 			pName := fmt.Sprintf("Player #%v", player.Number)
-			player.Name = promptForString(pName, 2, maxPlayerNameLen, true, "Name for player #%v:", p+1)
+			player.Name = promptForString(pName, 2, maxNameLen, true, "Name for player #%v:", p+1)
 		}
 		player.Balance = startingMoney
 	}
@@ -56,7 +56,9 @@ func (game *gameData) playGame() {
 
 	//Init stocks
 	game.stocks = defaultStocks
+	game.stockChoices = []choiceData{}
 	for s := range game.stocks {
+		game.stockChoices = append(game.stockChoices, choiceData{Name: game.stocks[s].Name})
 		startPrice := RND()*10 + 2
 		game.stocks[s].setPrice(startPrice)
 		game.stocks[s].Volatility = RND() * (maxVolatility)

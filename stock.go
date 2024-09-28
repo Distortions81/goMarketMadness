@@ -70,6 +70,10 @@ func roundToCent(price float64) float64 {
 	return (math.Round(price*100) / 100)
 }
 
+func floorToCent(price float64) float64 {
+	return (math.Floor(price*100) / 100)
+}
+
 func roundToDollar(price float64) float64 {
 	return (math.Floor(price*10000) / 10000)
 }

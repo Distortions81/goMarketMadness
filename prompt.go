@@ -152,7 +152,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 	return value
 }
 
-func promptForChoice(game *gameData, player *playerData, options []choiceData) {
+func promptForChoice(game *gameData, player *playerData, options []choiceData) int {
 	fmt.Println("")
 	for i, item := range options {
 		fmt.Printf("%v) %v\n", i+1, item.Name)
@@ -167,8 +167,11 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) {
 		} else if choice.ChoiceFunc != nil {
 			choice.ChoiceFunc(game, player)
 		}
+		return num
 	} else {
 		fmt.Println("That isn't a valid choice!")
 		promptForChoice(game, player, options)
 	}
+
+	return 0
 }
