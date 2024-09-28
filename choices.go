@@ -44,14 +44,15 @@ func endTurn(game *gameData, player *playerData) {
 }
 
 func buyShares(game *gameData, player *playerData) {
-	fmt.Printf("Buy shares of which stock?\n")
+	fmt.Printf("\nBuy shares of which stock?\n")
 
+	//Pretty-print list
 	maxLen := 0
 	for _, stock := range game.stocks {
 		maxLen = max(maxLen, len(stock.Name))
 	}
 	for s, stock := range game.stocks {
-		fmt.Printf("#%v %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
+		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
 	}
 
 	choice := promptForInteger(1, 1, len(game.stocks), "Buy which stock?")
@@ -67,9 +68,10 @@ func buyShares(game *gameData, player *playerData) {
 
 	numShares := promptForInteger(int(suggest), 1, int(maxBuy), "How many shares?")
 	dollarValue := roundToCent(game.stocks[choice].Price * float64(numShares))
+	checkBalance(game, player)
 	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, game.stocks[choice].Name, dollarValue) {
 		player.debit(dollarValue)
-		checkBalance(game, player)
+		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, player.Balance)
 		//add stock to player
 	}
 }
