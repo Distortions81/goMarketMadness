@@ -130,12 +130,12 @@ func (player *playerData) loanCharges() {
 
 		player.Loans[l].makePayment(principalPayment)
 
-		fmt.Printf("Loan #%v: Payment: $%0.2f, Principal Reduction: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, principalPayment, interestForWeek)
+		fmt.Printf("Loan #%v: Payment: $%0.2f, Principal: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, player.Loans[l].Principal, interestForWeek)
 
 		if player.Loans[l].Principal <= 0.01 {
 			player.Loans[l].Principal = 0
 			player.Loans[l].Complete = true
-			fmt.Printf("Loan #%v is fully paid off.\n", l+1)
+			fmt.Printf("Loan #%v is now paid off.\n", l+1)
 		}
 	}
 }
