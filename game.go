@@ -10,6 +10,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/Distortions81/goCardinal"
 )
 
 func (game *gameData) playGame() {
@@ -66,8 +68,8 @@ func (game *gameData) playGame() {
 	//Game loop
 	game.tickStocks()
 	for week := range game.numWeeks {
-		game.week = week
-		fmt.Printf("\n*** The %v week has begun! ***\n", numberNames[week])
+		game.week = week + 1
+		fmt.Printf("\n*** The %v week has begun! ***\n", goCardinal.NumberToOrdinal(int64(game.week)))
 		game.tickAPR()
 
 		for p, player := range game.players {

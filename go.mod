@@ -5,6 +5,7 @@ go 1.23.1
 require github.com/faiface/beep v1.1.0
 
 require (
+	github.com/Distortions81/goCardinal v0.0.2 // indirect
 	github.com/hajimehoshi/oto v0.7.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8 // indirect
