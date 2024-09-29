@@ -33,7 +33,7 @@ func payLoan(game *gameData, player *playerData) {
 			}
 			printLoan(l, loan)
 		}
-		choice = promptForInteger(1, 1, numLoans, "What loan do you want to make a payment on?")
+		choice = promptForInteger(false, 1, 1, numLoans, "What loan do you want to make a payment on?")
 	}
 	loan := player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
@@ -79,7 +79,7 @@ func takeLoan(game *gameData, player *playerData) {
 		return
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
-	loanTerm := promptForInteger(remainingWeeks, 1, remainingWeeks, prompt)
+	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
 
 	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.week, TermWeeks: loanTerm}
 	totalInterest := calcTotalInterest(newLoan)

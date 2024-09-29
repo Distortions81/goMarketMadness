@@ -61,7 +61,6 @@ func readLine() string {
 }
 
 func promptForString(defaultAnswer string, min, max int, confirm bool, format string, args ...interface{}) string {
-	fmt.Printf("Default answer '%v'\n", defaultAnswer)
 	fmt.Printf(format+" ", args...)
 
 	line := readLine()
@@ -76,7 +75,7 @@ func promptForString(defaultAnswer string, min, max int, confirm bool, format st
 	}
 
 	if confirm {
-		if promptForBool(true, "Confirm") {
+		if promptForBool(true, "Confirm: (%v)", defaultAnswer) {
 			return line
 		} else {
 			promptForString(defaultAnswer, min, max, confirm, format, args...)
@@ -94,33 +93,37 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	if defaultYes {
 		question = " (Y/n):"
 	} else {
-		question = " (y/n):"
+		question = " (y/N):"
 	}
 	result := promptForString("", 0, 3, false, format+question, args...)
 
-	if !defaultYes && result == "" {
-		fmt.Println("That isn't a valid option, type yes/no or y/n.")
-		return promptForBool(defaultYes, format, args...)
+	if defaultYes {
+		return result == "" || strings.EqualFold(result, "y") || strings.EqualFold(result, "yes")
+	} else {
+		return result != "" || strings.EqualFold(result, "n") || strings.EqualFold(result, "no")
 	}
-	return (defaultYes && result == "") || strings.EqualFold(result, "y") || strings.EqualFold(result, "yes")
 }
 
-func promptForInteger(defaultVal, min, max int, prompt string) int {
-	fmt.Printf("%v (%v-%v): (%v) ", prompt, min, max, defaultVal)
+func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) int {
+	if useDefault {
+		fmt.Printf("%v (%v-%v): (%v) ", prompt, min, max, defaultVal)
+	} else {
+		fmt.Printf("%v (%v-%v): ", prompt, min, max)
+	}
 
 	line := readLine()
 	fmt.Println()
-	if line == "" {
+	if useDefault && line == "" {
 		return defaultVal
 	}
 	value, err := strconv.ParseInt(line, 10, 64)
 	if err != nil {
 		fmt.Println("That isn't a number.")
-		return promptForInteger(defaultVal, min, max, prompt)
+		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 	if int(value) < min || int(value) > max {
 		fmt.Printf("Must be a value between %v and %v.\n", min, max)
-		return promptForInteger(defaultVal, min, max, prompt)
+		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 
 	return int(value)
@@ -159,7 +162,7 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) i
 		fmt.Printf("%v) %v\n", i+1, item.Name)
 	}
 
-	num := promptForInteger(1, 1, len(options), "Choice")
+	num := promptForInteger(true, 1, 1, len(options), "Choice")
 	if num < len(options) {
 		choice := options[num-1]
 		if len(choice.Submenu) > 0 {

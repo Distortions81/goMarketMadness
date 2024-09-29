@@ -61,7 +61,7 @@ func buyShares(game *gameData, player *playerData) {
 		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
 	}
 
-	choice := promptForInteger(1, 1, len(game.stocks), "Buy which stock?")
+	choice := promptForInteger(false, 1, 1, len(game.stocks), "Buy which stock?")
 	maxAfford := math.Floor(player.Balance / game.stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
@@ -72,7 +72,7 @@ func buyShares(game *gameData, player *playerData) {
 	maxBuy := math.Min(game.gGetFloat(SET_MAXSHARES), maxAfford)
 	suggest := math.Min(10, maxBuy)
 
-	numShares := promptForInteger(int(suggest), 1, int(maxBuy), "How many shares?")
+	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")
 	dollarValue := roundToCent(game.stocks[choice].Price * float64(numShares))
 	checkBalance(game, player)
 	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, game.stocks[choice].Name, dollarValue) {

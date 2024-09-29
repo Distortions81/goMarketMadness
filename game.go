@@ -42,13 +42,13 @@ func (game *gameData) playGame() {
 
 func (game *gameData) setup() {
 
-	choice := promptForBool(false, "Use default game settings?")
+	choice := promptForBool(false, "Customize game settings?")
 
 	if len(game.settings) == 0 {
 		game.settings = defSettings
 	}
 
-	if !choice {
+	if choice {
 		for _, item := range game.settings {
 			input := promptForString(game.gGetString(item.id), 0, 64, false, "%v: (%v):", item.name, item.defSetting)
 			game.gPutString(item.id, input)
@@ -60,11 +60,11 @@ func (game *gameData) setup() {
 	//Prompt to create players
 	numPlayers := len(game.players)
 	if game.players == nil {
-		numPlayers = promptForInteger(1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
+		numPlayers = promptForInteger(true, 1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
 		game.players = make([]*playerData, numPlayers)
 	} else {
 		if !promptForBool(false, "Play again with same %v players?", numPlayers) {
-			numPlayers = promptForInteger(1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
+			numPlayers = promptForInteger(true, 1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
 			game.players = make([]*playerData, numPlayers)
 		}
 	}
@@ -85,14 +85,14 @@ func (game *gameData) setup() {
 		player.Number = p + 1
 		player.Loans = []loanData{}
 		if player.Name == "" {
-			pName := fmt.Sprintf("Player #%v", player.Number)
-			player.Name = promptForString(pName, 2, game.gGetInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
+			pName := fmt.Sprintf("Player-%v", player.Number)
+			player.Name = promptForString(pName, 0, game.gGetInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
 		}
 		player.Balance = game.gGetFloat(SET_STARTMONEY)
 	}
 
 	//Prompt for game length
-	game.numWeeks = promptForInteger(24, 4, game.gGetInt(SET_MAXWEEKS), "How many weeks?")
+	game.numWeeks = promptForInteger(true, 24, 4, game.gGetInt(SET_MAXWEEKS), "How many weeks?")
 
 	//Init stocks
 	game.stocks = defaultStocks
