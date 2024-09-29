@@ -16,20 +16,21 @@ import (
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
-	{Name: "Banking", Submenu: mainBankChoices},
-	{Name: "Leave the table"},
+	{Name: "Banking", Submenu: bankChoices},
+	{Name: "Leave the game"},
 }
 
-var mainBankChoices []choiceData = []choiceData{
+var bankChoices []choiceData = []choiceData{
+	{Name: "Diplay loans", ChoiceFunc: displayLoans},
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
-	{Name: "See balance", ChoiceFunc: checkBalance},
+	{Name: "See account balance", ChoiceFunc: checkBalance},
 }
 
 var stockChoices []choiceData = []choiceData{
+	{Name: "Display shares", ChoiceFunc: displayShares},
 	{Name: "Buy shares", ChoiceFunc: buyShares},
 	{Name: "Sell shares", ChoiceFunc: sellShares},
-	{Name: "List owned shares", ChoiceFunc: listShares},
 	{Name: "Go back"},
 }
 
@@ -80,7 +81,7 @@ func buyShares(game *gameData, player *playerData) {
 func sellShares(game *gameData, player *playerData) {
 }
 
-func listShares(game *gameData, player *playerData) {
+func displayShares(game *gameData, player *playerData) {
 
 	count := 0
 	fmt.Println()

@@ -52,6 +52,12 @@ func printLoan(num int, loan loanData) {
 	fmt.Printf("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%\n", num, loan.Starting, loan.Principal, loan.APR)
 }
 
+func displayLoans(game *gameData, player *playerData) {
+	for l, loan := range player.Loans {
+		printLoan(l, loan)
+	}
+}
+
 func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Current APR %0.2f%%\n", game.APR)
 
