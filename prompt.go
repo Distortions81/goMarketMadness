@@ -76,6 +76,9 @@ func promptForString(defaultAnswer string, min, max int, confirm bool, format st
 
 	if confirm {
 		if promptForBool(true, "Confirm: (%v)", defaultAnswer) {
+			if line == "" {
+				return defaultAnswer
+			}
 			return line
 		} else {
 			promptForString(defaultAnswer, min, max, confirm, format, args...)

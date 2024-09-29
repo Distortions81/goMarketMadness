@@ -81,14 +81,13 @@ func (game *gameData) setup() {
 	}
 
 	//Init players, give starting money
-	for p, player := range game.players {
-		player.Number = p + 1
-		player.Loans = []loanData{}
-		if player.Name == "" {
-			pName := fmt.Sprintf("Player-%v", player.Number)
-			player.Name = promptForString(pName, 0, game.gGetInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
+	for p, _ := range game.players {
+		game.players[p].Loans = []loanData{}
+		if game.players[p].Name == "" {
+			pName := fmt.Sprintf("Player-%v", p+1)
+			game.players[p].Name = promptForString(pName, 0, game.gGetInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
 		}
-		player.Balance = game.gGetFloat(SET_STARTMONEY)
+		game.players[p].Balance = game.gGetFloat(SET_STARTMONEY)
 	}
 
 	//Prompt for game length
