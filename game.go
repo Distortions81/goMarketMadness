@@ -111,4 +111,5 @@ func (game *gameData) setup() {
 		game.gGetFloat(SET_MAXAPR)-
 			game.gGetFloat(SET_MINAPR)+
 			game.gGetFloat(SET_MINAPR))
+	game.tickAPR()
 }

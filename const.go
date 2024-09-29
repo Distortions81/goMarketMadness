@@ -45,7 +45,7 @@ var defSettings = []settingsData{
 	{name: "Min stock volatility", id: SET_MINSIG, defSetting: 3},
 	{name: "Max stock volatility", id: SET_MAXSIG, defSetting: 10},
 	{name: "Volatility volatility", id: SET_SIGSIG, defSetting: 10},
-	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 10},
+	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 5},
 	{name: "Max single loan amount", id: SET_MAXLOAN, defSetting: 1000000},
 	{name: "Min single loan amount", id: SET_MINLOAN, defSetting: 1000},
 	{name: "Max loan APR", id: SET_MAXAPR, defSetting: 19},

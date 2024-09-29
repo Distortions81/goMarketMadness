@@ -221,9 +221,9 @@ func (game *gameData) tickAPR() {
 	game.APR = math.Min(game.APR, game.gGetFloat(SET_MAXAPR))
 
 	if game.lastAPR > game.APR {
-		fmt.Printf("APR decreased %0.2f%% to: %0.2f%%\n", game.lastAPR-game.APR, game.APR)
+		fmt.Printf("APR decreased by %0.2f%% to %0.2f%%\n", game.lastAPR-game.APR, game.APR)
 	} else if game.APR > game.lastAPR {
-		fmt.Printf("APR increased %0.2f%% to: %0.2f%%\n", game.APR-game.lastAPR, game.APR)
+		fmt.Printf("APR increased by %0.2f%% to %0.2f%%\n", game.APR-game.lastAPR, game.APR)
 	}
 }
 
