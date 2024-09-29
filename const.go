@@ -35,10 +35,10 @@ const (
 )
 
 var defSettings = []settingsData{
-	{name: "Max game players", id: SET_MAXPLAYERS, defSetting: 25},
+	{name: "Max game players", id: SET_MAXPLAYERS, defSetting: 25, hide: true},
 	{name: "Max game weeks", id: SET_MAXWEEKS, defSetting: 52},
-	{name: "Max player name length", id: SET_MAXNAMELEN, defSetting: 64},
-	{name: "RNG logarithm ratio", id: SET_RANDLOG, defSetting: 100},
+	{name: "Max player name length", id: SET_MAXNAMELEN, defSetting: 64, hide: true},
+	{name: "RNG logarithm ratio", id: SET_RANDLOG, defSetting: 100, hide: true},
 	{name: "Max player loan count", id: SET_MAXLOANNUM, defSetting: 10},
 	{name: "Max buy shares", id: SET_MAXSHARES, defSetting: 10000},
 	{name: "Player starting money", id: SET_STARTMONEY, defSetting: 5000},

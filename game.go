@@ -50,6 +50,9 @@ func (game *gameData) setup() {
 
 	if choice {
 		for _, item := range game.settings {
+			if item.hide {
+				continue
+			}
 			input := promptForString(game.gGetString(item.id), 0, 64, false, "%v: (%v):", item.name, item.defSetting)
 			game.gPutString(item.id, input)
 		}

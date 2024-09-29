@@ -18,6 +18,7 @@ type gameData struct {
 }
 
 type settingsData struct {
+	hide bool
 	name string
 
 	id int
