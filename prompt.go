@@ -126,7 +126,7 @@ func promptForInteger(defaultVal, min, max int, prompt string) int {
 }
 
 func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
-	fmt.Printf("%v (%v-%v): (%v) ", prompt, min, max, defaultVal)
+	fmt.Printf("%v ($%0.2f-$%0.2f): ($%0.2f) ", prompt, min, max, defaultVal)
 
 	line := readLine()
 	fmt.Println()

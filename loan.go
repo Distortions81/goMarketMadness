@@ -208,6 +208,7 @@ func processLoans(player *playerData) int {
 }
 
 func (game *gameData) tickAPR() {
+	game.lastAPR = game.APR
 	changePercent := 2 * volatilityAPR * RND()
 	change := 1 + (changePercent / 100)
 	if rand.Float64() > 0.5 {
@@ -219,7 +220,11 @@ func (game *gameData) tickAPR() {
 	game.APR = math.Max(game.APR, minAPR)
 	game.APR = math.Min(game.APR, maxAPR)
 
-	//fmt.Printf("New interest rate: %0.2f%%\n", game.APR)
+	if game.lastAPR > game.APR {
+		fmt.Printf("APR decreased %0.2f%% to: %0.2f%%\n", game.lastAPR-game.APR, game.APR)
+	} else if game.APR > game.lastAPR {
+		fmt.Printf("APR increased %0.2f%% to: %0.2f%%\n", game.APR-game.lastAPR, game.APR)
+	}
 }
 
 func (player *playerData) getCount() int {

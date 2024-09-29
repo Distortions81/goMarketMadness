@@ -10,7 +10,7 @@ package main
 
 type gameData struct {
 	players        []*playerData
-	APR            float64
+	APR, lastAPR   float64
 	stocks         []stockData
 	stockChoices   []choiceData
 	week, numWeeks int
