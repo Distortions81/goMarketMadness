@@ -13,22 +13,6 @@ import (
 	"math"
 )
 
-var configChoices []choiceData = []choiceData{
-	{Name: "Starting money", SettingType: SETTING_INT},
-	{Name: "RNG logarithm", SettingType: SETTING_INT},
-	{Name: "Minimum volatility", SettingType: SETTING_FLOAT},
-	{Name: "Maximim volatility", SettingType: SETTING_FLOAT},
-	{Name: "Volatility volatility", SettingType: SETTING_FLOAT},
-	{Name: "APR volatility", SettingType: SETTING_FLOAT},
-	{Name: "Maximum stock shares", SettingType: SETTING_INT},
-	{Name: "Maximum loan count", SettingType: SETTING_INT},
-	{Name: "Maximum loan amount", SettingType: SETTING_INT},
-	{Name: "Minimum loan amount", SettingType: SETTING_INT},
-	{Name: "Maximum APR", SettingType: SETTING_FLOAT},
-	{Name: "Minimum APR", SettingType: SETTING_FLOAT},
-	{Name: "Go back"},
-}
-
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
@@ -54,7 +38,6 @@ type choiceData struct {
 	Name,
 	Desc string
 
-	SettingType    SETTING_TYPE
 	DefaultSetting any
 
 	ChoiceFunc func(game *gameData, player *playerData)
@@ -86,7 +69,7 @@ func buyShares(game *gameData, player *playerData) {
 		return
 	}
 
-	maxBuy := math.Min(float64(game.settings.maxShares), maxAfford)
+	maxBuy := math.Min(game.gGetFloat(SET_MAXSHARES), maxAfford)
 	suggest := math.Min(10, maxBuy)
 
 	numShares := promptForInteger(int(suggest), 1, int(maxBuy), "How many shares?")

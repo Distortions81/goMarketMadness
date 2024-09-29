@@ -19,18 +19,18 @@ func (game *gameData) playGame() {
 	//Prompt to create players
 	numPlayers := len(game.players)
 	if game.players == nil {
-		numPlayers = promptForInteger(1, 1, game.settings.maxPlayers, "How many players?")
+		numPlayers = promptForInteger(1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
 		game.players = make([]*playerData, numPlayers)
 	} else {
 		if !promptForBool(false, "Play again with same %v players?", numPlayers) {
-			numPlayers = promptForInteger(1, 1, game.settings.maxPlayers, "How many players?")
+			numPlayers = promptForInteger(1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
 			game.players = make([]*playerData, numPlayers)
 		}
 	}
 
 	choice := promptForBool(false, "Use default game settings?")
 	if !choice {
-		promptForChoice(game, nil, configChoices)
+		//
 	} else {
 		game.settings = defSettings
 	}
@@ -52,13 +52,13 @@ func (game *gameData) playGame() {
 		player.Loans = []loanData{}
 		if player.Name == "" {
 			pName := fmt.Sprintf("Player #%v", player.Number)
-			player.Name = promptForString(pName, 2, game.settings.maxNameLen, true, "Name for player #%v:", p+1)
+			player.Name = promptForString(pName, 2, game.gGetInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
 		}
-		player.Balance = game.settings.startingMoney
+		player.Balance = game.gGetFloat(SET_STARTMONEY)
 	}
 
 	//Prompt for game length
-	game.numWeeks = promptForInteger(24, 4, game.settings.maxWeeks, "How many weeks?")
+	game.numWeeks = promptForInteger(24, 4, game.gGetInt(SET_MAXWEEKS), "How many weeks?")
 
 	//Init stocks
 	game.stocks = defaultStocks
@@ -67,11 +67,14 @@ func (game *gameData) playGame() {
 		game.stockChoices = append(game.stockChoices, choiceData{Name: game.stocks[s].Name})
 		startPrice := RND()*10 + 2
 		game.stocks[s].setPrice(startPrice)
-		game.stocks[s].Volatility = RND() * (game.settings.maxSigma)
+		game.stocks[s].Volatility = RND() * game.gGetFloat(SET_MAXSIG)
 	}
 
 	//Init APR
-	game.APR = genLogRand(game, game.settings.maxAPR-game.settings.minAPR) + game.settings.minAPR
+	game.APR = genLogRand(game,
+		game.gGetFloat(SET_MAXAPR)-
+			game.gGetFloat(SET_MINAPR)+
+			game.gGetFloat(SET_MINAPR))
 
 	//Game loop
 	game.tickStocks()

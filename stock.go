@@ -49,7 +49,7 @@ func (stock *stockData) tickVolatility(game *gameData) {
 	stock.LastVolatility = stock.Volatility
 	stock.VolatilityHistory = append(stock.VolatilityHistory, stock.LastVolatility)
 
-	changePercent := 2 * game.settings.sigmaSigma * RND()
+	changePercent := 2 * game.gGetFloat(SET_SIGSIG) * RND()
 
 	change := 1 + (changePercent / 100)
 	if rand.Float64() > 0.5 {
@@ -58,8 +58,8 @@ func (stock *stockData) tickVolatility(game *gameData) {
 		stock.Volatility = (stock.LastVolatility * (1 / change))
 	}
 
-	stock.Volatility = math.Max(stock.Volatility, game.settings.minSigma)
-	stock.Volatility = math.Min(stock.Volatility, game.settings.maxSigma)
+	stock.Volatility = math.Max(stock.Volatility, game.gGetFloat(SET_MINSIG))
+	stock.Volatility = math.Min(stock.Volatility, game.gGetFloat(SET_MAXSIG))
 }
 
 func (stock *stockData) setPrice(price float64) {

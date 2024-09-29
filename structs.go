@@ -13,16 +13,17 @@ type gameData struct {
 	APR, lastAPR   float64
 	stocks         []stockData
 	stockChoices   []choiceData
-	settings       settingsData
+	settings       []settingsData
 	week, numWeeks int
 }
 
 type settingsData struct {
-	maxPlayers, maxWeeks, maxNameLen,
-	maxLoanCount, maxShares int
+	name string
 
-	startingMoney, minSigma, maxSigma, sigmaSigma, randLogarithm,
-	sigmaAPR, maxLoanAmount, minLoanAmount, minAPR, maxAPR float64
+	id int
+
+	defSetting,
+	setting any
 }
 
 type playerData struct {
