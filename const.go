@@ -35,21 +35,21 @@ const (
 )
 
 var defSettings = []settingsData{
-	{name: "max players", id: SET_MAXPLAYERS, defSetting: 25},
-	{name: "max weeks", id: SET_MAXWEEKS, defSetting: 52},
-	{name: "max name length", id: SET_MAXNAMELEN, defSetting: 64},
+	{name: "Max game players", id: SET_MAXPLAYERS, defSetting: 25},
+	{name: "Max game weeks", id: SET_MAXWEEKS, defSetting: 52},
+	{name: "Max player name length", id: SET_MAXNAMELEN, defSetting: 64},
 	{name: "RNG logarithm ratio", id: SET_RANDLOG, defSetting: 100},
-	{name: "max loan number", id: SET_MAXLOANNUM, defSetting: 10},
-	{name: "max shares", id: SET_MAXSHARES, defSetting: 10000},
-	{name: "starting money", id: SET_STARTMONEY, defSetting: 5000},
-	{name: "min volatility", id: SET_MINSIG, defSetting: 3},
-	{name: "max volatility", id: SET_MAXSIG, defSetting: 10},
-	{name: "volatility volatility", id: SET_SIGSIG, defSetting: 10},
-	{name: "apr volatility", id: SET_SIGAPR, defSetting: 10},
-	{name: "max loan amount", id: SET_MAXLOAN, defSetting: 1000000},
-	{name: "min loan amount", id: SET_MINLOAN, defSetting: 1000},
-	{name: "max apr", id: SET_MAXAPR, defSetting: 19},
-	{name: "min apr", id: SET_MINAPR, defSetting: 2.5},
+	{name: "Max player loan count", id: SET_MAXLOANNUM, defSetting: 10},
+	{name: "Max buy shares", id: SET_MAXSHARES, defSetting: 10000},
+	{name: "Player starting money", id: SET_STARTMONEY, defSetting: 5000},
+	{name: "Min stock volatility", id: SET_MINSIG, defSetting: 3},
+	{name: "Max stock volatility", id: SET_MAXSIG, defSetting: 10},
+	{name: "Volatility volatility", id: SET_SIGSIG, defSetting: 10},
+	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 10},
+	{name: "Max single loan amount", id: SET_MAXLOAN, defSetting: 1000000},
+	{name: "Min single loan amount", id: SET_MINLOAN, defSetting: 1000},
+	{name: "Max loan APR", id: SET_MAXAPR, defSetting: 19},
+	{name: "Min loan APR", id: SET_MINAPR, defSetting: 2.5},
 }
 
 // Copy defaults to setting
