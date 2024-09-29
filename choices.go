@@ -13,6 +13,22 @@ import (
 	"math"
 )
 
+var configChoices []choiceData = []choiceData{
+	{Name: "Starting money", SettingType: SETTING_INT, DefaultSetting: startingMoney},
+	{Name: "RNG logarithm", SettingType: SETTING_INT, DefaultSetting: randLogarithm},
+	{Name: "Minimum volatility", SettingType: SETTING_FLOAT, DefaultSetting: minVolatility},
+	{Name: "Maximim volatility", SettingType: SETTING_FLOAT, DefaultSetting: maxVolatility},
+	{Name: "Volatility volatility", SettingType: SETTING_FLOAT, DefaultSetting: volatilityVolatility},
+	{Name: "APR volatility", SettingType: SETTING_FLOAT, DefaultSetting: volatilityAPR},
+	{Name: "Maximum stock shares", SettingType: SETTING_INT, DefaultSetting: maxShares},
+	{Name: "Maximum loan count", SettingType: SETTING_INT, DefaultSetting: maxLoanCount},
+	{Name: "Maximum loan amount", SettingType: SETTING_INT, DefaultSetting: maxLoanAmount},
+	{Name: "Minimum loan amount", SettingType: SETTING_INT, DefaultSetting: minLoanAmount},
+	{Name: "Maximum APR", SettingType: SETTING_FLOAT, DefaultSetting: maxAPR},
+	{Name: "Minimum APR", SettingType: SETTING_FLOAT, DefaultSetting: minAPR},
+	{Name: "Go back"},
+}
+
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
@@ -35,7 +51,12 @@ var stockChoices []choiceData = []choiceData{
 }
 
 type choiceData struct {
-	Name       string
+	Name,
+	Desc string
+
+	SettingType    SETTING_TYPE
+	DefaultSetting any
+
 	ChoiceFunc func(game *gameData, player *playerData)
 	Submenu    []choiceData
 	Enabled    bool

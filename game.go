@@ -28,6 +28,12 @@ func (game *gameData) playGame() {
 		}
 	}
 
+	choice := promptForBool(false, "Change game settings?")
+	if choice {
+		promptForChoice(game, nil, configChoices)
+	} else {
+		//Use defaults, or use previous settings.
+	}
 	oldPlayers := game.players
 
 	//Create players
