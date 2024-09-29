@@ -41,14 +41,21 @@ var defSettings = []settingsData{
 	{name: "RNG logarithm ratio", id: SET_RANDLOG, defSetting: 100},
 	{name: "max loan number", id: SET_MAXLOANNUM, defSetting: 10},
 	{name: "max shares", id: SET_MAXSHARES, defSetting: 10000},
-	{name: "starting money", id: SET_STARTMONEY, defSetting: 5000.0},
-	{name: "min volatility", id: SET_MINSIG, defSetting: 3.0},
-	{name: "max volatility", id: SET_MAXSIG, defSetting: 10.0},
+	{name: "starting money", id: SET_STARTMONEY, defSetting: 5000},
+	{name: "min volatility", id: SET_MINSIG, defSetting: 3},
+	{name: "max volatility", id: SET_MAXSIG, defSetting: 10},
 	{name: "volatility volatility", id: SET_SIGSIG, defSetting: 10},
 	{name: "max loan amount", id: SET_MAXLOAN, defSetting: 1000000},
 	{name: "min loan amount", id: SET_MINLOAN, defSetting: 1000},
 	{name: "max apr", id: SET_MAXAPR, defSetting: 19},
 	{name: "min apr", id: SET_MINAPR, defSetting: 2.5},
+}
+
+// Copy defaults to setting
+func init() {
+	for s := range defSettings {
+		defSettings[s].setting = defSettings[s].defSetting
+	}
 }
 
 func (game *gameData) gGetInt(id int) int {
