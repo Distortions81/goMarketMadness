@@ -63,7 +63,7 @@ func (game *gameData) showStockPrices() {
 
 func (game *gameData) tickStocks() {
 	for s := range game.stocks {
-		game.stocks[s].tickStock()
+		game.stocks[s].tickStock(game)
 	}
 }
 

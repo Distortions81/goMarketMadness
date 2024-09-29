@@ -64,7 +64,7 @@ func takeLoan(game *gameData, player *playerData) {
 	numLoans := player.getCount()
 
 	maxLoan := calcMaxLoan(game, player)
-	if maxLoan < 1.00 || numLoans > maxLoanCount {
+	if maxLoan < 1.00 || numLoans > game.settings.maxLoanCount {
 		fmt.Print("Sorry, the bank refuses to loan you any money.")
 		return
 	}
@@ -209,7 +209,7 @@ func processLoans(player *playerData) int {
 
 func (game *gameData) tickAPR() {
 	game.lastAPR = game.APR
-	changePercent := 2 * volatilityAPR * RND()
+	changePercent := 2 * game.settings.sigmaAPR * RND()
 	change := 1 + (changePercent / 100)
 	if rand.Float64() > 0.5 {
 		game.APR = (game.APR * change)
@@ -217,8 +217,8 @@ func (game *gameData) tickAPR() {
 		game.APR = (game.APR * (1 / change))
 	}
 
-	game.APR = math.Max(game.APR, minAPR)
-	game.APR = math.Min(game.APR, maxAPR)
+	game.APR = math.Max(game.APR, game.settings.minAPR)
+	game.APR = math.Min(game.APR, game.settings.maxAPR)
 
 	if game.lastAPR > game.APR {
 		fmt.Printf("APR decreased %0.2f%% to: %0.2f%%\n", game.lastAPR-game.APR, game.APR)

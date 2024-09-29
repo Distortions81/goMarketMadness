@@ -13,24 +13,14 @@ import (
 	"github.com/faiface/beep/speaker"
 )
 
-const (
-	maxPlayers           = 25
-	minWeeks             = 2
-	maxWeeks             = 52
-	maxNameLen           = 64
-	startingMoney        = 5000
-	randLogarithm        = 100
-	minVolatility        = 3.0
-	maxVolatility        = 10.0
-	volatilityVolatility = 10
-	volatilityAPR        = 7
-	maxLoanCount         = 10
-	maxLoanAmount        = 1000000.0
-	minLoanAmount        = 1000
-	maxShares            = 10000
-	maxAPR               = 19
-	minAPR               = 2.5
-)
+var defSettings = settingsData{
+	maxPlayers: 25, maxWeeks: 52, maxNameLen: 64, randLogarithm: 100,
+	maxLoanCount: 10, maxShares: 10000,
+
+	startingMoney: 5000, minSigma: 3, maxSigma: 10, sigmaSigma: 10,
+	sigmaAPR: 7, maxLoanAmount: 1000000, minLoanAmount: 1000,
+	maxAPR: 19, minAPR: 2.5,
+}
 
 type SETTING_TYPE int
 

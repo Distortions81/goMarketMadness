@@ -13,7 +13,7 @@ import (
 	"math/rand"
 )
 
-func (stock *stockData) tickStock() {
+func (stock *stockData) tickStock(game *gameData) {
 	if stock.Bankrupt {
 		return
 	}
@@ -21,7 +21,7 @@ func (stock *stockData) tickStock() {
 	stock.LastPrice = stock.Price
 	stock.PriceHistory = append(stock.PriceHistory, stock.LastPrice)
 
-	stock.tickVolatility()
+	stock.tickVolatility(game)
 	changePercent := 2 * stock.Volatility * RND()
 	change := 1 + (changePercent / 100)
 
@@ -45,11 +45,11 @@ func (stock *stockData) tickStock() {
 	}
 }
 
-func (stock *stockData) tickVolatility() {
+func (stock *stockData) tickVolatility(game *gameData) {
 	stock.LastVolatility = stock.Volatility
 	stock.VolatilityHistory = append(stock.VolatilityHistory, stock.LastVolatility)
 
-	changePercent := 2 * volatilityVolatility * RND()
+	changePercent := 2 * game.settings.sigmaSigma * RND()
 
 	change := 1 + (changePercent / 100)
 	if rand.Float64() > 0.5 {
@@ -58,8 +58,8 @@ func (stock *stockData) tickVolatility() {
 		stock.Volatility = (stock.LastVolatility * (1 / change))
 	}
 
-	stock.Volatility = math.Max(stock.Volatility, minVolatility)
-	stock.Volatility = math.Min(stock.Volatility, maxVolatility)
+	stock.Volatility = math.Max(stock.Volatility, game.settings.minSigma)
+	stock.Volatility = math.Min(stock.Volatility, game.settings.maxSigma)
 }
 
 func (stock *stockData) setPrice(price float64) {

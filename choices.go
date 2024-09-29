@@ -14,18 +14,18 @@ import (
 )
 
 var configChoices []choiceData = []choiceData{
-	{Name: "Starting money", SettingType: SETTING_INT, DefaultSetting: startingMoney},
-	{Name: "RNG logarithm", SettingType: SETTING_INT, DefaultSetting: randLogarithm},
-	{Name: "Minimum volatility", SettingType: SETTING_FLOAT, DefaultSetting: minVolatility},
-	{Name: "Maximim volatility", SettingType: SETTING_FLOAT, DefaultSetting: maxVolatility},
-	{Name: "Volatility volatility", SettingType: SETTING_FLOAT, DefaultSetting: volatilityVolatility},
-	{Name: "APR volatility", SettingType: SETTING_FLOAT, DefaultSetting: volatilityAPR},
-	{Name: "Maximum stock shares", SettingType: SETTING_INT, DefaultSetting: maxShares},
-	{Name: "Maximum loan count", SettingType: SETTING_INT, DefaultSetting: maxLoanCount},
-	{Name: "Maximum loan amount", SettingType: SETTING_INT, DefaultSetting: maxLoanAmount},
-	{Name: "Minimum loan amount", SettingType: SETTING_INT, DefaultSetting: minLoanAmount},
-	{Name: "Maximum APR", SettingType: SETTING_FLOAT, DefaultSetting: maxAPR},
-	{Name: "Minimum APR", SettingType: SETTING_FLOAT, DefaultSetting: minAPR},
+	{Name: "Starting money", SettingType: SETTING_INT},
+	{Name: "RNG logarithm", SettingType: SETTING_INT},
+	{Name: "Minimum volatility", SettingType: SETTING_FLOAT},
+	{Name: "Maximim volatility", SettingType: SETTING_FLOAT},
+	{Name: "Volatility volatility", SettingType: SETTING_FLOAT},
+	{Name: "APR volatility", SettingType: SETTING_FLOAT},
+	{Name: "Maximum stock shares", SettingType: SETTING_INT},
+	{Name: "Maximum loan count", SettingType: SETTING_INT},
+	{Name: "Maximum loan amount", SettingType: SETTING_INT},
+	{Name: "Minimum loan amount", SettingType: SETTING_INT},
+	{Name: "Maximum APR", SettingType: SETTING_FLOAT},
+	{Name: "Minimum APR", SettingType: SETTING_FLOAT},
 	{Name: "Go back"},
 }
 
@@ -86,7 +86,7 @@ func buyShares(game *gameData, player *playerData) {
 		return
 	}
 
-	maxBuy := math.Min(maxShares, maxAfford)
+	maxBuy := math.Min(float64(game.settings.maxShares), maxAfford)
 	suggest := math.Min(10, maxBuy)
 
 	numShares := promptForInteger(int(suggest), 1, int(maxBuy), "How many shares?")

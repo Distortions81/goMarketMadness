@@ -13,10 +13,10 @@ import (
 	"math/rand"
 )
 
-func genLogRand(max float64) float64 {
+func genLogRand(game *gameData, max float64) float64 {
 	u := rand.Float64()
 
-	return float64(max) * math.Log(1+u) / math.Log(randLogarithm)
+	return float64(max) * math.Log(1+u) / math.Log(game.settings.randLogarithm)
 }
 
 func clamp(value, minVal, maxVal int) int {
