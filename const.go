@@ -9,7 +9,6 @@
 package main
 
 import (
-	"reflect"
 	"strconv"
 
 	"github.com/faiface/beep"
@@ -32,6 +31,7 @@ const (
 	SET_MINLOAN
 	SET_MAXAPR
 	SET_MINAPR
+	SET_END
 )
 
 var defSettings = []settingsData{
@@ -45,6 +45,7 @@ var defSettings = []settingsData{
 	{name: "min volatility", id: SET_MINSIG, defSetting: 3},
 	{name: "max volatility", id: SET_MAXSIG, defSetting: 10},
 	{name: "volatility volatility", id: SET_SIGSIG, defSetting: 10},
+	{name: "apr volatility", id: SET_SIGAPR, defSetting: 10},
 	{name: "max loan amount", id: SET_MAXLOAN, defSetting: 1000000},
 	{name: "min loan amount", id: SET_MINLOAN, defSetting: 1000},
 	{name: "max apr", id: SET_MAXAPR, defSetting: 19},
@@ -66,17 +67,20 @@ func (game *gameData) gGetInt(id int) int {
 			switch v := val.(type) {
 			case int:
 				return v
+			case int64:
+				return int(v)
 			case string:
 				vint, _ := strconv.ParseInt(v, 10, 64)
 				return int(vint)
 			case float64:
 				return int(v)
-			default:
-				return 0
+			case float32:
+				return int(v)
 			}
 		}
 	}
-	return 0
+
+	return -1
 }
 
 func (game *gameData) gGetFloat(id int) float64 {
@@ -87,44 +91,68 @@ func (game *gameData) gGetFloat(id int) float64 {
 			switch v := val.(type) {
 			case int:
 				return float64(v)
+			case int64:
+				return float64(v)
 			case string:
 				vint, _ := strconv.ParseFloat(v, 64)
 				return vint
 			case float64:
 				return v
-			default:
-				return 0
+			case float32:
+				return float64(v)
 			}
 		}
 	}
-	return 0
+
+	return -1
 }
 
 func (game *gameData) gGetString(id int) string {
 	for _, item := range game.settings {
 		if item.id == id {
-			val := item.setting
-
-			switch v := val.(type) {
+			switch v := game.settings[id].setting.(type) {
 			case int:
+				return strconv.FormatInt(int64(v), 10)
+			case int64:
 				return strconv.FormatInt(int64(v), 10)
 			case string:
 				return v
 			case float64:
 				return strconv.FormatFloat(v, 'f', -1, 64)
-			default:
-				return ""
+			case float32:
+				return strconv.FormatFloat(float64(v), 'f', -1, 64)
 			}
 		}
 	}
-	return ""
+
+	return "Error"
 }
 
-var (
-	intType    = reflect.TypeOf(int(0))
-	floatType  = reflect.TypeOf(float64(0))
-	stringType = reflect.TypeOf("")
-)
+func (game *gameData) gPutString(id int, val string) {
+	for _, item := range game.settings {
+		if item.id == id {
+			valType := item.setting
+
+			switch valType.(type) {
+			case int:
+				newVal, _ := strconv.ParseInt(val, 10, 64)
+				game.settings[id].setting = newVal
+			case int64:
+				newVal, _ := strconv.ParseInt(val, 10, 64)
+				game.settings[id].setting = newVal
+			case string:
+				game.settings[id].setting = val
+			case float64:
+				newVal, _ := strconv.ParseFloat(val, 64)
+				game.settings[id].setting = newVal
+			case float32:
+				newVal, _ := strconv.ParseFloat(val, 64)
+				game.settings[id].setting = newVal
+			}
+			return
+		}
+	}
+}
 
 var (
 	defaultStocks []stockData = []stockData{

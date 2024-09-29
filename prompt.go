@@ -61,6 +61,7 @@ func readLine() string {
 }
 
 func promptForString(defaultAnswer string, min, max int, confirm bool, format string, args ...interface{}) string {
+	fmt.Printf("Default answer '%v'\n", defaultAnswer)
 	fmt.Printf(format+" ", args...)
 
 	line := readLine()

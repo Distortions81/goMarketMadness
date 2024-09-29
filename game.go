@@ -16,6 +16,47 @@ import (
 
 func (game *gameData) playGame() {
 
+	game.setup()
+
+	//Game loop
+	game.tickStocks()
+	for week := range game.numWeeks {
+		game.week = week + 1
+		fmt.Printf("\n*** The %v week has begun! ***\n", goCardinal.NumberToOrdinal(int64(game.week)))
+		game.tickAPR()
+
+		for p, player := range game.players {
+			game.showStockPrices()
+			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
+			processLoans(game.players[p])
+			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
+			promptForChoice(game, player, mainChoiceMenu)
+		}
+		game.tickStocks()
+	}
+
+	if promptForBool(false, "Game over!\nPlay again?") {
+		game.playGame()
+	}
+}
+
+func (game *gameData) setup() {
+
+	choice := promptForBool(false, "Use default game settings?")
+
+	if len(game.settings) == 0 {
+		game.settings = defSettings
+	}
+
+	if !choice {
+		for _, item := range game.settings {
+			input := promptForString(game.gGetString(item.id), 0, 64, false, "%v: (%v):", item.name, item.defSetting)
+			game.gPutString(item.id, input)
+		}
+	} else {
+		game.settings = defSettings
+	}
+
 	//Prompt to create players
 	numPlayers := len(game.players)
 	if game.players == nil {
@@ -26,13 +67,6 @@ func (game *gameData) playGame() {
 			numPlayers = promptForInteger(1, 1, game.gGetInt(SET_MAXPLAYERS), "How many players?")
 			game.players = make([]*playerData, numPlayers)
 		}
-	}
-
-	choice := promptForBool(false, "Use default game settings?")
-	if !choice {
-		//
-	} else {
-		game.settings = defSettings
 	}
 	oldPlayers := game.players
 
@@ -75,25 +109,4 @@ func (game *gameData) playGame() {
 		game.gGetFloat(SET_MAXAPR)-
 			game.gGetFloat(SET_MINAPR)+
 			game.gGetFloat(SET_MINAPR))
-
-	//Game loop
-	game.tickStocks()
-	for week := range game.numWeeks {
-		game.week = week + 1
-		fmt.Printf("\n*** The %v week has begun! ***\n", goCardinal.NumberToOrdinal(int64(game.week)))
-		game.tickAPR()
-
-		for p, player := range game.players {
-			game.showStockPrices()
-			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
-			processLoans(game.players[p])
-			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
-			promptForChoice(game, player, mainChoiceMenu)
-		}
-		game.tickStocks()
-	}
-
-	if promptForBool(false, "Game over!\nPlay again?") {
-		game.playGame()
-	}
 }
