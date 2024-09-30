@@ -16,6 +16,7 @@ var (
 )
 
 const (
+	//Re-arrange or delete will break saves
 	SET_MAXPLAYERS = iota
 	SET_MAXWEEKS
 	SET_DEFAULT_WEEKS
