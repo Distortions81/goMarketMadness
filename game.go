@@ -8,8 +8,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-
-	"github.com/Distortions81/goCardinal"
 )
 
 func (game *gameData) playGame() {
@@ -19,14 +17,6 @@ func (game *gameData) playGame() {
 	//Game loop
 	for week := range game.NumWeeks {
 		game.Week = week + 1
-		if game.Week == game.NumWeeks {
-			fmt.Println("** LAST WEEK!!! ***")
-		} else {
-			fmt.Printf("\n*** The %v week (of %v) has begun! ***\n",
-				goCardinal.NumberToOrdinal(int64(game.Week)),
-				goCardinal.NumberToOrdinal(int64(game.NumWeeks)))
-		}
-		game.tickAPR()
 
 		for p, player := range game.Players {
 			if player.Gone {
@@ -38,7 +28,14 @@ func (game *gameData) playGame() {
 			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
+
+		if game.Week == game.NumWeeks {
+			fmt.Println("** LAST WEEK!!! ***")
+		} else {
+			fmt.Printf("\n*** WEEK %v of %v has begun! ***\n", game.Week, game.NumWeeks)
+		}
 		game.tickStocks()
+		game.tickAPR()
 	}
 
 	game.showGameStats()
@@ -119,6 +116,7 @@ func (game *gameData) setup() {
 		game.Stocks[s].TrendPrice = randBool()
 		game.Stocks[s].TrendVolatility = randBool()
 		game.Stocks[s].setPrice(startPrice)
+		game.Stocks[s].LastPrice = game.Stocks[s].Price
 		game.Stocks[s].Volatility = rand.Float64() * game.getSettingFloat(SET_MAXSIG)
 	}
 
