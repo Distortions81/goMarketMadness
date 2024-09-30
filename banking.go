@@ -221,9 +221,9 @@ func (game *gameData) tickAPR() {
 	game.APR = roundToCent(game.APR)
 
 	if game.LastAPR > game.APR {
-		fmt.Printf("APR ↓%0.2f%% to %0.2f%%\n", game.LastAPR-game.APR, game.APR)
+		fmt.Printf("APR %v%0.2f%% to %0.2f%%\n", trendSymbol[2], game.LastAPR-game.APR, game.APR)
 	} else if game.APR > game.LastAPR {
-		fmt.Printf("APR ↑%0.2f%% to %0.2f%%\n", game.APR-game.LastAPR, game.APR)
+		fmt.Printf("APR %v%0.2f%% to %0.2f%%\n", trendSymbol[1], game.APR-game.LastAPR, game.APR)
 	}
 
 	game.APRHistory = append(game.APRHistory, game.APR)
