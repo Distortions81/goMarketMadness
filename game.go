@@ -97,7 +97,7 @@ func (game *gameData) setup() {
 	}
 
 	//Prompt for game length
-	game.NumWeeks = promptForInteger(true, 52, 4, game.getSettingInt(SET_MAXWEEKS), "How many weeks?")
+	game.NumWeeks = promptForInteger(true, game.getSettingInt(SET_DEFAULT_WEEKS), 4, game.getSettingInt(SET_MAXWEEKS), "How many weeks?")
 
 	//Init stocks
 	game.Stocks = defaultStocks

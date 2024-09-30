@@ -30,7 +30,7 @@ func payLoan(data cData) {
 			}
 			loan.printLoan(l)
 		}
-		choice = promptForInteger(false, 1, 1, numLoans, "What loan do you want to make a payment on?")
+		choice = promptForInteger(false, 1, 1, numLoans, "Which loan do you want to make a payment on?")
 	}
 	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {

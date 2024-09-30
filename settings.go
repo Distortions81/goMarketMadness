@@ -18,6 +18,7 @@ var (
 const (
 	SET_MAXPLAYERS = iota
 	SET_MAXWEEKS
+	SET_DEFAULT_WEEKS
 	SET_MAXNAMELEN
 	SET_RANDLOG
 	SET_MAXLOANNUM
@@ -39,7 +40,8 @@ const (
 
 var defSettings = []settingsData{
 	{Name: "Max game players", ID: SET_MAXPLAYERS, DefSetting: 25, Hide: true},
-	{Name: "Max game weeks", ID: SET_MAXWEEKS, DefSetting: 52},
+	{Name: "Max game weeks", ID: SET_MAXWEEKS, DefSetting: 52, Hide: true},
+	{Name: "Default game weeks", ID: SET_DEFAULT_WEEKS, DefSetting: 24},
 	{Name: "Max player name length", ID: SET_MAXNAMELEN, DefSetting: 64, Hide: true},
 	{Name: "RNG logarithm ratio", ID: SET_RANDLOG, DefSetting: 100, Hide: true},
 	{Name: "Max player loan count", ID: SET_MAXLOANNUM, DefSetting: 10},
