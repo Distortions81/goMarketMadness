@@ -223,12 +223,15 @@ func (game *gameData) tickAPR() {
 
 	game.apr = math.Max(game.apr, game.gGetFloat(SET_MINAPR))
 	game.apr = math.Min(game.apr, game.gGetFloat(SET_MAXAPR))
+	game.apr = roundToCent(game.apr)
 
 	if game.lastAPR > game.apr {
-		fmt.Printf("APR decreased by %0.2f%% to %0.2f%%\n", game.lastAPR-game.apr, game.apr)
+		fmt.Printf("APR ↓%0.2f%% to %0.2f%%\n", game.lastAPR-game.apr, game.apr)
 	} else if game.apr > game.lastAPR {
-		fmt.Printf("APR increased by %0.2f%% to %0.2f%%\n", game.apr-game.lastAPR, game.apr)
+		fmt.Printf("APR ↑%0.2f%% to %0.2f%%\n", game.apr-game.lastAPR, game.apr)
 	}
+
+	game.aprHistory = append(game.aprHistory, game.apr)
 }
 
 func (player *playerData) getCount() int {

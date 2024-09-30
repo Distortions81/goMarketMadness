@@ -20,7 +20,6 @@ func (game *gameData) playGame() {
 	game.setup()
 
 	//Game loop
-	game.tickStocks()
 	for week := range game.numWeeks {
 		game.week = week + 1
 		fmt.Printf("\n*** The %v week has begun! ***\n", goCardinal.NumberToOrdinal(int64(game.week)))
@@ -36,7 +35,26 @@ func (game *gameData) playGame() {
 		game.tickStocks()
 	}
 
-	if promptForBool(false, "Game over!\nPlay again?") {
+	fmt.Print("Game over!\n\nSynopsis:\n")
+	if game.aprHistory[0] < game.apr {
+		fmt.Printf("APR: ↑$%0.2f: $%0.2f\n", game.apr-game.aprHistory[0], game.apr)
+	} else if game.apr < game.aprHistory[0] {
+		fmt.Printf("APR: ↓$%0.2f: $%0.2f\n", game.aprHistory[0]-game.apr, game.apr)
+	} else {
+		fmt.Printf("APR: →$%0.2f\n", game.apr)
+	}
+
+	for _, stock := range game.stocks {
+		if stock.PriceHistory[0] < stock.Price {
+			fmt.Printf("%v: ↑$%0.2f: $%0.2f\n", stock.Name, stock.Price-stock.PriceHistory[0], stock.Price)
+		} else if stock.Price < stock.PriceHistory[0] {
+			fmt.Printf("%v: ↓$%0.2f: $%0.2f\n", stock.Name, stock.PriceHistory[0]-stock.Price, stock.Price)
+		} else {
+			fmt.Printf("%v: →$%0.2f\n", stock.Name, stock.Price)
+		}
+	}
+
+	if promptForBool(false, "\nPlay again?") {
 		game.playGame()
 	}
 }
@@ -95,7 +113,7 @@ func (game *gameData) setup() {
 	}
 
 	//Prompt for game length
-	game.numWeeks = promptForInteger(true, 24, 4, game.gGetInt(SET_MAXWEEKS), "How many weeks?")
+	game.numWeeks = promptForInteger(true, 52, 4, game.gGetInt(SET_MAXWEEKS), "How many weeks?")
 
 	//Init stocks
 	game.stocks = defaultStocks
@@ -114,6 +132,6 @@ func (game *gameData) setup() {
 		game.gGetFloat(SET_MAXAPR)-
 			game.gGetFloat(SET_MINAPR)+
 			game.gGetFloat(SET_MINAPR))
+	game.apr = roundToCent(game.apr)
 	game.trendAPR = randBool()
-	game.tickAPR()
 }
