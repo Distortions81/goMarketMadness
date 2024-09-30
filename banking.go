@@ -59,7 +59,7 @@ func displayAllLoans(game *gameData, player *playerData) {
 }
 
 func takeLoan(game *gameData, player *playerData) {
-	fmt.Printf("Current APR %0.2f%%\n", game.apr)
+	fmt.Printf("Current APR %0.2f%%\n", game.APR)
 
 	numLoans := player.getLoanCount()
 
@@ -73,7 +73,7 @@ func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Maximum loan the bank will offer $%0.2f\n", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
-	remainingWeeks := game.numWeeks - game.week - 1
+	remainingWeeks := game.NumWeeks - game.Week - 1
 	if remainingWeeks <= 0 {
 		fmt.Println("There isn't enough time left in the game for a loan!")
 		return
@@ -81,7 +81,7 @@ func takeLoan(game *gameData, player *playerData) {
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
 	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
 
-	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.apr, StartWeek: game.week, TermWeeks: loanTerm}
+	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.Week, TermWeeks: loanTerm}
 	totalInterest := calcTotalInterest(newLoan)
 	payments := calcLoanPayment(newLoan)
 
@@ -96,7 +96,7 @@ func calcMaxLoan(game *gameData, player *playerData) float64 {
 	debt := 0.0
 
 	for _, stock := range player.Stocks {
-		value := game.stocks[stock.StockID].Price
+		value := game.Stocks[stock.StockID].Price
 		value = roundToCent(value)
 		stockAssets += (value * float64(stock.Shares))
 	}
@@ -208,30 +208,30 @@ func processLoans(player *playerData) int {
 }
 
 func (game *gameData) tickAPR() {
-	game.lastAPR = game.apr
+	game.LastAPR = game.APR
 	changePercent := 2 * game.getSettingFloat(SET_SIGAPR) * rand.Float64()
 	change := 1 + (changePercent / 100)
 
 	if rand.Float64() <= game.getSettingFloat(SET_APR_TREND) {
-		game.trendAPR = !game.trendAPR
+		game.TrendAPR = !game.TrendAPR
 	}
-	if game.trendAPR {
-		game.apr = (game.apr * change)
+	if game.TrendAPR {
+		game.APR = (game.APR * change)
 	} else {
-		game.apr = (game.apr * (1 / change))
+		game.APR = (game.APR * (1 / change))
 	}
 
-	game.apr = math.Max(game.apr, game.getSettingFloat(SET_MINAPR))
-	game.apr = math.Min(game.apr, game.getSettingFloat(SET_MAXAPR))
-	game.apr = roundToCent(game.apr)
+	game.APR = math.Max(game.APR, game.getSettingFloat(SET_MINAPR))
+	game.APR = math.Min(game.APR, game.getSettingFloat(SET_MAXAPR))
+	game.APR = roundToCent(game.APR)
 
-	if game.lastAPR > game.apr {
-		fmt.Printf("APR ↓%0.2f%% to %0.2f%%\n", game.lastAPR-game.apr, game.apr)
-	} else if game.apr > game.lastAPR {
-		fmt.Printf("APR ↑%0.2f%% to %0.2f%%\n", game.apr-game.lastAPR, game.apr)
+	if game.LastAPR > game.APR {
+		fmt.Printf("APR ↓%0.2f%% to %0.2f%%\n", game.LastAPR-game.APR, game.APR)
+	} else if game.APR > game.LastAPR {
+		fmt.Printf("APR ↑%0.2f%% to %0.2f%%\n", game.APR-game.LastAPR, game.APR)
 	}
 
-	game.aprHistory = append(game.aprHistory, game.apr)
+	game.APRHistory = append(game.APRHistory, game.APR)
 }
 
 func (player *playerData) getLoanCount() int {

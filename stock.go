@@ -26,10 +26,10 @@ func (stock *stockData) tickStock(game *gameData) {
 	change := 1 + (changePercent / 100)
 
 	if rand.Float64() <= game.getSettingFloat(SET_STOCK_TREND) {
-		stock.trendPrice = !stock.trendPrice
+		stock.TrendPrice = !stock.TrendPrice
 	}
 
-	if stock.trendPrice {
+	if stock.TrendPrice {
 		stock.setPrice(stock.LastPrice * change)
 	} else {
 		stock.setPrice(stock.LastPrice * (1 / change))
@@ -58,9 +58,9 @@ func (stock *stockData) tickVolatility(game *gameData) {
 	change := 1 + (changePercent / 100)
 
 	if rand.Float64() <= game.getSettingFloat(SET_VOL_TREND) {
-		stock.trendVolatility = !stock.trendVolatility
+		stock.TrendVolatility = !stock.TrendVolatility
 	}
-	if stock.trendVolatility {
+	if stock.TrendVolatility {
 		stock.Volatility = (stock.LastVolatility * change)
 	} else {
 		stock.Volatility = (stock.LastVolatility * (1 / change))
@@ -94,7 +94,7 @@ func (player *playerData) creditStock(game *gameData, stockNum, numShares int) {
 		}
 	}
 
-	newStock := playerStockData{Name: game.stocks[stockNum].Name, StockID: stockNum, Shares: numShares}
+	newStock := playerStockData{Name: game.Stocks[stockNum].Name, StockID: stockNum, Shares: numShares}
 	player.Stocks = append(player.Stocks, newStock)
 }
 

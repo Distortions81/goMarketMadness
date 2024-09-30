@@ -54,15 +54,15 @@ func buyShares(game *gameData, player *playerData) {
 
 	//Print stock list
 	maxLen := 0
-	for _, stock := range game.stocks {
+	for _, stock := range game.Stocks {
 		maxLen = maxInt(maxLen, len(stock.Name))
 	}
-	for s, stock := range game.stocks {
+	for s, stock := range game.Stocks {
 		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
 	}
 
-	choice := promptForInteger(false, 1, 1, len(game.stocks), "Buy which stock?")
-	maxAfford := math.Floor(player.Balance / game.stocks[choice].Price)
+	choice := promptForInteger(false, 1, 1, len(game.Stocks), "Buy which stock?")
+	maxAfford := math.Floor(player.Balance / game.Stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
 		fmt.Printf("You can't afford to buy any shares.")
@@ -73,9 +73,9 @@ func buyShares(game *gameData, player *playerData) {
 	suggest := math.Min(10, maxBuy)
 
 	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")
-	dollarValue := roundToCent(game.stocks[choice].Price * float64(numShares))
+	dollarValue := roundToCent(game.Stocks[choice].Price * float64(numShares))
 	checkBalance(game, player)
-	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, game.stocks[choice].Name, dollarValue) {
+	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, game.Stocks[choice].Name, dollarValue) {
 		player.debit(dollarValue)
 		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, player.Balance)
 		player.creditStock(game, choice, numShares)
@@ -92,7 +92,7 @@ func displayShares(game *gameData, player *playerData) {
 	for _, stock := range player.Stocks {
 		if stock.Shares > 0 {
 			fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
-				stock.Name, stock.Shares, float64(stock.Shares)*game.stocks[stock.StockID].Price)
+				stock.Name, stock.Shares, float64(stock.Shares)*game.Stocks[stock.StockID].Price)
 			count++
 		}
 	}

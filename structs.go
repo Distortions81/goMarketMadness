@@ -9,24 +9,24 @@
 package main
 
 type gameData struct {
-	players                    []*playerData
-	stocks                     []stockData
-	stockChoices               []choiceData
-	settings                   []settingsData
-	aprHistory                 []float64
-	apr, lastAPR               float64
-	trendAPR                   bool
-	week, numWeeks, numPlayers int
+	Players                    []*playerData
+	Stocks                     []stockData
+	StockChoices               []choiceData
+	Settings                   []settingsData
+	APRHistory                 []float64
+	APR, LastAPR               float64
+	TrendAPR                   bool
+	Week, NumWeeks, NumPlayers int
 }
 
 type settingsData struct {
-	hide bool
-	name string
+	Hide bool
+	Name string
 
-	id int
+	ID int
 
-	defSetting,
-	setting any
+	DefSetting,
+	Setting any
 }
 
 type playerData struct {
@@ -69,6 +69,6 @@ type stockData struct {
 	PriceHistory      []float64
 	VolatilityHistory []float64
 
-	trendPrice,
-	trendVolatility bool
+	TrendPrice,
+	TrendVolatility bool
 }

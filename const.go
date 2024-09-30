@@ -37,37 +37,37 @@ const (
 )
 
 var defSettings = []settingsData{
-	{name: "Max game players", id: SET_MAXPLAYERS, defSetting: 25, hide: true},
-	{name: "Max game weeks", id: SET_MAXWEEKS, defSetting: 52},
-	{name: "Max player name length", id: SET_MAXNAMELEN, defSetting: 64, hide: true},
-	{name: "RNG logarithm ratio", id: SET_RANDLOG, defSetting: 100, hide: true},
-	{name: "Max player loan count", id: SET_MAXLOANNUM, defSetting: 10},
-	{name: "Max buy shares", id: SET_MAXSHARES, defSetting: 10000},
-	{name: "Player starting money", id: SET_STARTMONEY, defSetting: 5000},
-	{name: "Min stock volatility", id: SET_MINSIG, defSetting: 1},
-	{name: "Max stock volatility", id: SET_MAXSIG, defSetting: 3},
-	{name: "Volatility volatility", id: SET_SIGSIG, defSetting: 5},
-	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 2},
-	{name: "Max single loan amount", id: SET_MAXLOAN, defSetting: 1000000},
-	{name: "Min single loan amount", id: SET_MINLOAN, defSetting: 1000},
-	{name: "Max loan APR", id: SET_MAXAPR, defSetting: 19},
-	{name: "Min loan APR", id: SET_MINAPR, defSetting: 2.5},
-	{name: "APR trend change chance 0.01-1.0", id: SET_APR_TREND, defSetting: 0.2},
-	{name: "Volatility trend change chance 0.01-1.0", id: SET_VOL_TREND, defSetting: 0.2},
-	{name: "Stock trend change chance 0.01-1.0", id: SET_STOCK_TREND, defSetting: 0.2},
+	{Name: "Max game players", ID: SET_MAXPLAYERS, DefSetting: 25, Hide: true},
+	{Name: "Max game weeks", ID: SET_MAXWEEKS, DefSetting: 52},
+	{Name: "Max player name length", ID: SET_MAXNAMELEN, DefSetting: 64, Hide: true},
+	{Name: "RNG logarithm ratio", ID: SET_RANDLOG, DefSetting: 100, Hide: true},
+	{Name: "Max player loan count", ID: SET_MAXLOANNUM, DefSetting: 10},
+	{Name: "Max buy shares", ID: SET_MAXSHARES, DefSetting: 10000},
+	{Name: "Player starting money", ID: SET_STARTMONEY, DefSetting: 5000},
+	{Name: "Min stock volatility", ID: SET_MINSIG, DefSetting: 1},
+	{Name: "Max stock volatility", ID: SET_MAXSIG, DefSetting: 3},
+	{Name: "Volatility volatility", ID: SET_SIGSIG, DefSetting: 5},
+	{Name: "Apr volatility", ID: SET_SIGAPR, DefSetting: 2},
+	{Name: "Max single loan amount", ID: SET_MAXLOAN, DefSetting: 1000000},
+	{Name: "Min single loan amount", ID: SET_MINLOAN, DefSetting: 1000},
+	{Name: "Max loan APR", ID: SET_MAXAPR, DefSetting: 19},
+	{Name: "Min loan APR", ID: SET_MINAPR, DefSetting: 2.5},
+	{Name: "APR trend change chance 0.01-1.0", ID: SET_APR_TREND, DefSetting: 0.2},
+	{Name: "Volatility trend change chance 0.01-1.0", ID: SET_VOL_TREND, DefSetting: 0.2},
+	{Name: "Stock trend change chance 0.01-1.0", ID: SET_STOCK_TREND, DefSetting: 0.2},
 }
 
 // Copy defaults to setting
 func init() {
 	for s := range defSettings {
-		defSettings[s].setting = defSettings[s].defSetting
+		defSettings[s].Setting = defSettings[s].DefSetting
 	}
 }
 
 func (game *gameData) getSettingInt(id int) int {
-	for _, item := range game.settings {
-		if item.id == id {
-			val := item.setting
+	for _, item := range game.Settings {
+		if item.ID == id {
+			val := item.Setting
 
 			switch v := val.(type) {
 			case int:
@@ -89,9 +89,9 @@ func (game *gameData) getSettingInt(id int) int {
 }
 
 func (game *gameData) getSettingFloat(id int) float64 {
-	for _, item := range game.settings {
-		if item.id == id {
-			val := item.setting
+	for _, item := range game.Settings {
+		if item.ID == id {
+			val := item.Setting
 
 			switch v := val.(type) {
 			case int:
@@ -113,9 +113,9 @@ func (game *gameData) getSettingFloat(id int) float64 {
 }
 
 func (game *gameData) getSettingString(id int) string {
-	for _, item := range game.settings {
-		if item.id == id {
-			switch v := game.settings[id].setting.(type) {
+	for _, item := range game.Settings {
+		if item.ID == id {
+			switch v := game.Settings[id].Setting.(type) {
 			case int:
 				return strconv.FormatInt(int64(v), 10)
 			case int64:
@@ -134,25 +134,25 @@ func (game *gameData) getSettingString(id int) string {
 }
 
 func (game *gameData) putSettingString(id int, val string) {
-	for _, item := range game.settings {
-		if item.id == id {
-			valType := item.setting
+	for _, item := range game.Settings {
+		if item.ID == id {
+			valType := item.Setting
 
 			switch valType.(type) {
 			case int:
 				newVal, _ := strconv.ParseInt(val, 10, 64)
-				game.settings[id].setting = newVal
+				game.Settings[id].Setting = newVal
 			case int64:
 				newVal, _ := strconv.ParseInt(val, 10, 64)
-				game.settings[id].setting = newVal
+				game.Settings[id].Setting = newVal
 			case string:
-				game.settings[id].setting = val
+				game.Settings[id].Setting = val
 			case float64:
 				newVal, _ := strconv.ParseFloat(val, 64)
-				game.settings[id].setting = newVal
+				game.Settings[id].Setting = newVal
 			case float32:
 				newVal, _ := strconv.ParseFloat(val, 64)
-				game.settings[id].setting = newVal
+				game.Settings[id].Setting = newVal
 			}
 			return
 		}

@@ -53,7 +53,7 @@ func showChange(stock stockData) string {
 
 func (game *gameData) showStockPrices() {
 	fmt.Print("Stock prices: ")
-	for s, stock := range game.stocks {
+	for s, stock := range game.Stocks {
 		if s > 0 {
 			fmt.Print(" -- ")
 		}
@@ -63,8 +63,8 @@ func (game *gameData) showStockPrices() {
 }
 
 func (game *gameData) tickStocks() {
-	for s := range game.stocks {
-		game.stocks[s].tickStock(game)
+	for s := range game.Stocks {
+		game.Stocks[s].tickStock(game)
 	}
 }
 
@@ -89,24 +89,24 @@ func getTrend(a, b float64) string {
 }
 
 func (game *gameData) promptNumPlayers() {
-	game.numPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
+	game.NumPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
 }
 
 func (game *gameData) createPlayerList(numPlayers int) {
-	game.players = make([]*playerData, numPlayers)
+	game.Players = make([]*playerData, numPlayers)
 }
 
 func (game *gameData) showGameStats() {
 	fmt.Print("Game over!\n\nSynopsis:\n")
-	if game.aprHistory[0] < game.apr {
-		fmt.Printf("APR: ↑$%0.2f: $%0.2f\n", game.apr-game.aprHistory[0], game.apr)
-	} else if game.apr < game.aprHistory[0] {
-		fmt.Printf("APR: ↓$%0.2f: $%0.2f\n", game.aprHistory[0]-game.apr, game.apr)
+	if game.APRHistory[0] < game.APR {
+		fmt.Printf("APR: ↑$%0.2f: $%0.2f\n", game.APR-game.APRHistory[0], game.APR)
+	} else if game.APR < game.APRHistory[0] {
+		fmt.Printf("APR: ↓$%0.2f: $%0.2f\n", game.APRHistory[0]-game.APR, game.APR)
 	} else {
-		fmt.Printf("APR: →$%0.2f\n", game.apr)
+		fmt.Printf("APR: →$%0.2f\n", game.APR)
 	}
 
-	for _, stock := range game.stocks {
+	for _, stock := range game.Stocks {
 		if stock.PriceHistory[0] < stock.Price {
 			fmt.Printf("%v: ↑$%0.2f: $%0.2f\n", stock.Name, stock.Price-stock.PriceHistory[0], stock.Price)
 		} else if stock.Price < stock.PriceHistory[0] {
