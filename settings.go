@@ -7,8 +7,12 @@ package main
 
 import (
 	"strconv"
+)
 
-	"github.com/faiface/beep"
+var (
+	defaultStocks []stockData = []stockData{
+		{Name: "US STEEL"}, {Name: "PAN AM"}, {Name: "FORD"}, {Name: "SANYO"}, {Name: "XEROX"}, {Name: "AT&T"},
+	}
 )
 
 const (
@@ -155,12 +159,3 @@ func (game *gameData) putSettingString(id int, val string) {
 		}
 	}
 }
-
-var (
-	defaultStocks []stockData = []stockData{
-		{Name: "US STEEL"}, {Name: "PAN AM"}, {Name: "FORD"}, {Name: "SANYO"}, {Name: "XEROX"}, {Name: "AT&T"},
-	}
-	games []gameData
-
-	sr beep.SampleRate
-)
