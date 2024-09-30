@@ -125,4 +125,6 @@ func (game *gameData) showGameStats() {
 			fmt.Printf("%v: %v$%0.2f\n", stock.Name, trendSymbol[0], stock.Price)
 		}
 	}
+
+	leaderboard(cData{game: game, player: nil})
 }

@@ -30,7 +30,7 @@ func (game *gameData) playGame() {
 		}
 
 		if game.Week == game.NumWeeks {
-			fmt.Println("** LAST WEEK!!! ***")
+			fmt.Println("\n** LAST WEEK!!! ***")
 		} else {
 			fmt.Printf("\n*** WEEK %v of %v has begun! ***\n", game.Week, game.NumWeeks)
 		}

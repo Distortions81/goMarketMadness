@@ -8,12 +8,14 @@ package main
 import (
 	"fmt"
 	"math"
+	"sort"
 )
 
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
 	{Name: "Banking", Submenu: bankChoices},
+	{Name: "Leaderboard", ChoiceFunc: leaderboard},
 	{Name: "Leave the game", ChoiceFunc: leaveTable},
 }
 
@@ -46,6 +48,49 @@ type choiceData struct {
 	ChoiceFunc func(data cData)
 	Submenu    []choiceData
 	Enabled    bool
+}
+
+type leaderData struct {
+	Name     string
+	StockVal float64
+	BankVal  float64
+	Debts    float64
+	NetWorth float64
+}
+
+func leaderboard(data cData) {
+	var leaderBoard []leaderData
+	for _, player := range data.game.Players {
+		tmp := leaderData{Name: player.Name}
+
+		stockVal := 0.0
+		for _, stock := range player.Stocks {
+			stockVal += roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
+		}
+		tmp.StockVal = stockVal
+
+		debts := 0.0
+		for _, loan := range player.Loans {
+			debts += loan.Principal
+		}
+		tmp.Debts = debts
+		tmp.BankVal = player.Balance
+
+		netWorth := stockVal + player.Balance - debts
+		tmp.NetWorth = netWorth
+		leaderBoard = append(leaderBoard, tmp)
+	}
+
+	sort.Slice(leaderBoard, func(i, j int) bool {
+		return leaderBoard[i].NetWorth > leaderBoard[j].NetWorth
+	})
+
+	fmt.Println("\nLeaderboard:")
+	for v, victim := range leaderBoard {
+		fmt.Printf("#%v -- %v: Stocks: %v, Bank: %v, Debts: %v, Net: %v\n",
+			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
+	}
+
 }
 
 func leaveTable(data cData) {
