@@ -160,7 +160,7 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) i
 	}
 
 	num := promptForInteger(true, 1, 1, len(options), "Choice")
-	if num < len(options) {
+	if num <= len(options) {
 		choice := options[num-1]
 		if len(choice.Submenu) > 0 {
 			promptForChoice(game, player, choice.Submenu)

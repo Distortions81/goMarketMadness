@@ -25,7 +25,7 @@ func payLoan(data cData) {
 	choice := 1
 	if numLoans > 1 {
 		for l, loan := range data.player.Loans {
-			if loan.Complete {
+			if loan.Principal <= 0 || loan.Complete {
 				continue
 			}
 			loan.printLoan(l)

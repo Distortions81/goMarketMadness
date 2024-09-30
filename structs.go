@@ -31,6 +31,7 @@ type playerData struct {
 	Number   int
 	Balance  float64
 	Bankrupt bool
+	Gone     bool
 
 	Stocks []playerStockData
 	Loans  []loanData

@@ -14,7 +14,7 @@ var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
 	{Name: "Banking", Submenu: bankChoices},
-	{Name: "Leave the game"},
+	{Name: "Leave the game", ChoiceFunc: leaveTable},
 }
 
 var bankChoices []choiceData = []choiceData{
@@ -22,6 +22,7 @@ var bankChoices []choiceData = []choiceData{
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
 	{Name: "See account balance", ChoiceFunc: checkBalance},
+	{Name: "Go back"},
 }
 
 var stockChoices []choiceData = []choiceData{
@@ -45,6 +46,11 @@ type choiceData struct {
 	ChoiceFunc func(data cData)
 	Submenu    []choiceData
 	Enabled    bool
+}
+
+func leaveTable(data cData) {
+	fmt.Printf("Player #%v: (%v) has left the game.\n", data.player.Number, data.player.Name)
+	data.player.Gone = true
 }
 
 func endTurn(data cData) {

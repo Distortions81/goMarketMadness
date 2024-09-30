@@ -23,6 +23,9 @@ func (game *gameData) playGame() {
 		game.tickAPR()
 
 		for p, player := range game.Players {
+			if player.Gone {
+				continue
+			}
 			game.showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
 			game.Players[p].processLoans()
@@ -76,7 +79,7 @@ func (game *gameData) setup() {
 	//Create players
 	for p, player := range game.Players {
 		if player == nil {
-			game.Players[p] = &playerData{}
+			game.Players[p] = &playerData{Number: p + 1}
 			//Transfer old player name, if exists
 			if oldPlayers[p] != nil {
 				game.Players[p].Name = oldPlayers[p].Name
