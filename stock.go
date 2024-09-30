@@ -96,15 +96,14 @@ func (player *playerData) creditStock(game *gameData, stockNum, numShares int) {
 }
 
 func (player *playerData) debitStock(stockNum, numShares int) bool {
-	for s, stock := range player.Stocks {
-		if stock.StockID == stockNum {
-			if player.Stocks[s].Shares < numShares {
+	for s := range player.Stocks {
+		if s == stockNum {
+			if player.Stocks[s].Shares <= numShares {
 				player.Stocks[s].Shares -= numShares
 				return true
 			}
 			return false
 		}
 	}
-
 	return false
 }

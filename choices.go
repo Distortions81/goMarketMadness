@@ -70,6 +70,7 @@ func buyShares(data cData) {
 	}
 
 	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Buy which stock?")
+	choice -= 1
 	maxAfford := math.Floor(data.player.Balance / data.game.Stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
@@ -91,6 +92,36 @@ func buyShares(data cData) {
 }
 
 func sellShares(data cData) {
+	fmt.Printf("\nSell shares of which stock?\n")
+
+	//Print stock list
+	maxLen := 0
+	for _, stock := range data.player.Stocks {
+		if stock.Shares <= 0 {
+			continue
+		}
+		maxLen = maxInt(maxLen, len(stock.Name))
+	}
+	for s, stock := range data.player.Stocks {
+		if stock.Shares <= 0 {
+			continue
+		}
+		dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
+		fmt.Printf("%v) %*v -- (%v shares) $%0.2f\n", s+1,
+			maxLen, stock.Name, stock.Shares, dollarValue)
+	}
+
+	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Sell which stock?")
+	choice -= 1
+	stock := data.player.Stocks[choice]
+	suggest := min(10, float64(stock.Shares))
+	numShares := promptForInteger(true, int(suggest), 1, int(stock.Shares), "How many shares?")
+	dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(numShares))
+	if promptForBool(false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
+		data.player.credit(dollarValue)
+		fmt.Printf("Credit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
+		data.player.debitStock(stock.StockID, numShares)
+	}
 }
 
 func displayShares(data cData) {
@@ -98,11 +129,12 @@ func displayShares(data cData) {
 	count := 0
 	fmt.Println()
 	for _, stock := range data.player.Stocks {
-		if stock.Shares > 0 {
-			fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
-				stock.Name, stock.Shares, float64(stock.Shares)*data.game.Stocks[stock.StockID].Price)
-			count++
+		if stock.Shares <= 0 {
+			continue
 		}
+		fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
+			stock.Name, stock.Shares, float64(stock.Shares)*data.game.Stocks[stock.StockID].Price)
+		count++
 	}
 
 	if count == 0 {

@@ -118,11 +118,11 @@ func (game *gameData) showGameStats() {
 
 	for _, stock := range game.Stocks {
 		if stock.PriceHistory[0] < stock.Price {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", trendSymbol[1], stock.Name, stock.Price-stock.PriceHistory[0], stock.Price)
+			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
 		} else if stock.Price < stock.PriceHistory[0] {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", trendSymbol[2], stock.Name, stock.PriceHistory[0]-stock.Price, stock.Price)
+			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
 		} else {
-			fmt.Printf("%v: %v$%0.2f\n", trendSymbol[0], stock.Name, stock.Price)
+			fmt.Printf("%v: %v$%0.2f\n", stock.Name, trendSymbol[0], stock.Price)
 		}
 	}
 }

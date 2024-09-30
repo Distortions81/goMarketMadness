@@ -19,7 +19,13 @@ func (game *gameData) playGame() {
 	//Game loop
 	for week := range game.NumWeeks {
 		game.Week = week + 1
-		fmt.Printf("\n*** The %v week has begun! ***\n", goCardinal.NumberToOrdinal(int64(game.Week)))
+		if game.Week == game.NumWeeks {
+			fmt.Println("** LAST WEEK!!! ***")
+		} else {
+			fmt.Printf("\n*** The %v week (of %v) has begun! ***\n",
+				goCardinal.NumberToOrdinal(int64(game.Week)),
+				goCardinal.NumberToOrdinal(int64(game.NumWeeks)))
+		}
 		game.tickAPR()
 
 		for p, player := range game.Players {
