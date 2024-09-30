@@ -59,7 +59,7 @@ func displayLoans(game *gameData, player *playerData) {
 }
 
 func takeLoan(game *gameData, player *playerData) {
-	fmt.Printf("Current APR %0.2f%%\n", game.APR)
+	fmt.Printf("Current APR %0.2f%%\n", game.apr)
 
 	numLoans := player.getCount()
 
@@ -81,7 +81,7 @@ func takeLoan(game *gameData, player *playerData) {
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
 	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
 
-	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.week, TermWeeks: loanTerm}
+	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.apr, StartWeek: game.week, TermWeeks: loanTerm}
 	totalInterest := calcTotalInterest(newLoan)
 	payments := calcPayment(newLoan)
 
@@ -208,22 +208,26 @@ func processLoans(player *playerData) int {
 }
 
 func (game *gameData) tickAPR() {
-	game.lastAPR = game.APR
-	changePercent := 2 * game.gGetFloat(SET_SIGAPR) * RND()
+	game.lastAPR = game.apr
+	changePercent := 2 * game.gGetFloat(SET_SIGAPR) * rand.Float64()
 	change := 1 + (changePercent / 100)
-	if rand.Float64() > 0.5 {
-		game.APR = (game.APR * change)
+
+	if rand.Float64() <= game.gGetFloat(SET_APR_TREND) {
+		game.trendAPR = !game.trendAPR
+	}
+	if game.trendAPR {
+		game.apr = (game.apr * change)
 	} else {
-		game.APR = (game.APR * (1 / change))
+		game.apr = (game.apr * (1 / change))
 	}
 
-	game.APR = math.Max(game.APR, game.gGetFloat(SET_MINAPR))
-	game.APR = math.Min(game.APR, game.gGetFloat(SET_MAXAPR))
+	game.apr = math.Max(game.apr, game.gGetFloat(SET_MINAPR))
+	game.apr = math.Min(game.apr, game.gGetFloat(SET_MAXAPR))
 
-	if game.lastAPR > game.APR {
-		fmt.Printf("APR decreased by %0.2f%% to %0.2f%%\n", game.lastAPR-game.APR, game.APR)
-	} else if game.APR > game.lastAPR {
-		fmt.Printf("APR increased by %0.2f%% to %0.2f%%\n", game.APR-game.lastAPR, game.APR)
+	if game.lastAPR > game.apr {
+		fmt.Printf("APR decreased by %0.2f%% to %0.2f%%\n", game.lastAPR-game.apr, game.apr)
+	} else if game.apr > game.lastAPR {
+		fmt.Printf("APR increased by %0.2f%% to %0.2f%%\n", game.apr-game.lastAPR, game.apr)
 	}
 }
 

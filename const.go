@@ -31,6 +31,9 @@ const (
 	SET_MINLOAN
 	SET_MAXAPR
 	SET_MINAPR
+	SET_APR_TREND
+	SET_VOL_TREND
+	SET_STOCK_TREND
 	SET_END
 )
 
@@ -42,14 +45,17 @@ var defSettings = []settingsData{
 	{name: "Max player loan count", id: SET_MAXLOANNUM, defSetting: 10},
 	{name: "Max buy shares", id: SET_MAXSHARES, defSetting: 10000},
 	{name: "Player starting money", id: SET_STARTMONEY, defSetting: 5000},
-	{name: "Min stock volatility", id: SET_MINSIG, defSetting: 3},
-	{name: "Max stock volatility", id: SET_MAXSIG, defSetting: 10},
-	{name: "Volatility volatility", id: SET_SIGSIG, defSetting: 10},
-	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 5},
+	{name: "Min stock volatility", id: SET_MINSIG, defSetting: 1},
+	{name: "Max stock volatility", id: SET_MAXSIG, defSetting: 3},
+	{name: "Volatility volatility", id: SET_SIGSIG, defSetting: 5},
+	{name: "Apr volatility", id: SET_SIGAPR, defSetting: 2},
 	{name: "Max single loan amount", id: SET_MAXLOAN, defSetting: 1000000},
 	{name: "Min single loan amount", id: SET_MINLOAN, defSetting: 1000},
 	{name: "Max loan APR", id: SET_MAXAPR, defSetting: 19},
 	{name: "Min loan APR", id: SET_MINAPR, defSetting: 2.5},
+	{name: "APR trend change chance 0.01-1.0", id: SET_APR_TREND, defSetting: 0.2},
+	{name: "Volatility trend change chance 0.01-1.0", id: SET_VOL_TREND, defSetting: 0.2},
+	{name: "Stock trend change chance 0.01-1.0", id: SET_STOCK_TREND, defSetting: 0.2},
 }
 
 // Copy defaults to setting

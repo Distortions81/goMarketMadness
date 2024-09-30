@@ -11,7 +11,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/faiface/beep"
@@ -31,10 +30,6 @@ func CallSound(duration, frequency, volume int) {
 	}
 	tone := beep.Take(sr.N(time.Duration(duration)*time.Millisecond), sine)
 	speaker.Play(tone)
-}
-
-func RND() float64 {
-	return rand.Float64()
 }
 
 func DisplayAt(row, col int, data string) {

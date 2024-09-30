@@ -10,10 +10,11 @@ package main
 
 type gameData struct {
 	players        []*playerData
-	APR, lastAPR   float64
+	apr, lastAPR   float64
 	stocks         []stockData
 	stockChoices   []choiceData
 	settings       []settingsData
+	trendAPR       bool
 	week, numWeeks int
 }
 
@@ -57,6 +58,7 @@ type loanData struct {
 type stockData struct {
 	Name       string
 	Price      float64
+	PriceArrow int
 	Volatility float64
 	Bankrupt   bool
 
@@ -66,5 +68,6 @@ type stockData struct {
 	PriceHistory      []float64
 	VolatilityHistory []float64
 
-	Trend int
+	trendPrice,
+	trendVolatility bool
 }

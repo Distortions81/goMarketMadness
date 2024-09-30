@@ -11,6 +11,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -42,10 +43,10 @@ func fixTerm() {
 
 func showChange(stock stockData) string {
 	buf := fmt.Sprintf("%v: $%0.2f", stock.Name, stock.Price)
-	if stock.Trend == TREND_UP || stock.Trend == TREND_DOWN {
-		buf = buf + fmt.Sprintf(" %v $%0.2f", trendSymbol[stock.Trend], math.Abs(stock.Price-stock.LastPrice))
+	if stock.PriceArrow == TREND_UP || stock.PriceArrow == TREND_DOWN {
+		buf = buf + fmt.Sprintf(" %v $%0.2f", trendSymbol[stock.PriceArrow], math.Abs(stock.Price-stock.LastPrice))
 	} else {
-		buf = buf + fmt.Sprintf(" %v", trendSymbol[stock.Trend])
+		buf = buf + fmt.Sprintf(" %v", trendSymbol[stock.PriceArrow])
 	}
 	return buf
 }
@@ -71,4 +72,8 @@ func NumOnly(str string) string {
 	alphafilter, _ := regexp.Compile("[^0-9.]+")
 	str = alphafilter.ReplaceAllString(str, "")
 	return str
+}
+
+func randBool() bool {
+	return rand.Float64() <= 0.5
 }

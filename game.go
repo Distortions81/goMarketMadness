@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/Distortions81/goCardinal"
 )
@@ -101,15 +102,18 @@ func (game *gameData) setup() {
 	game.stockChoices = []choiceData{}
 	for s := range game.stocks {
 		game.stockChoices = append(game.stockChoices, choiceData{Name: game.stocks[s].Name})
-		startPrice := RND()*10 + 2
+		startPrice := rand.Float64()*10 + 2
+		game.stocks[s].trendPrice = randBool()
+		game.stocks[s].trendVolatility = randBool()
 		game.stocks[s].setPrice(startPrice)
-		game.stocks[s].Volatility = RND() * game.gGetFloat(SET_MAXSIG)
+		game.stocks[s].Volatility = rand.Float64() * game.gGetFloat(SET_MAXSIG)
 	}
 
 	//Init APR
-	game.APR = genLogRand(game,
+	game.apr = genLogRand(game,
 		game.gGetFloat(SET_MAXAPR)-
 			game.gGetFloat(SET_MINAPR)+
 			game.gGetFloat(SET_MINAPR))
+	game.trendAPR = randBool()
 	game.tickAPR()
 }
