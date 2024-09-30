@@ -166,7 +166,7 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) i
 			promptForChoice(game, player, choice.Submenu)
 			promptForChoice(game, player, options)
 		} else if choice.ChoiceFunc != nil {
-			choice.ChoiceFunc(game, player)
+			choice.ChoiceFunc(cData{game: game, player: player})
 		}
 		return num
 	} else {

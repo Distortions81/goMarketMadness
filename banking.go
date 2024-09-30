@@ -11,12 +11,12 @@ import (
 	"math/rand"
 )
 
-func checkBalance(game *gameData, player *playerData) {
-	fmt.Printf("Available balance: $%0.2f\n", player.Balance)
+func checkBalance(data cData) {
+	fmt.Printf("Available balance: $%0.2f\n", data.player.Balance)
 }
 
-func payLoan(game *gameData, player *playerData) {
-	numLoans := player.getLoanCount()
+func payLoan(data cData) {
+	numLoans := data.player.getLoanCount()
 	if numLoans == 0 {
 		fmt.Println("You don't have any loans.")
 		return
@@ -24,44 +24,40 @@ func payLoan(game *gameData, player *playerData) {
 
 	choice := 1
 	if numLoans > 1 {
-		for l, loan := range player.Loans {
+		for l, loan := range data.player.Loans {
 			if loan.Complete {
 				continue
 			}
-			printLoan(l, loan)
+			loan.printLoan(l)
 		}
 		choice = promptForInteger(false, 1, 1, numLoans, "What loan do you want to make a payment on?")
 	}
-	loan := player.Loans[choice-1]
+	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
 		fmt.Println("That loan is already paid off.")
 		return
 	}
-	printLoan(choice, loan)
-	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, player.Balance))
-	player.debit(amount)
+	loan.printLoan(choice)
+	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
+	data.player.debit(amount)
 	loan.makeLoanPayment(amount)
 	fmt.Printf("Made payment of $%0.2f\n", amount)
 	loan.PaymentHistory = append(loan.PaymentHistory, amount)
 }
 
-func printLoan(num int, loan loanData) {
-	fmt.Printf("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%\n", num, loan.Starting, loan.Principal, loan.APR)
-}
-
-func displayAllLoans(game *gameData, player *playerData) {
-	for l, loan := range player.Loans {
-		printLoan(l, loan)
+func displayAllLoans(data cData) {
+	for l, loan := range data.player.Loans {
+		loan.printLoan(l)
 	}
 }
 
-func takeLoan(game *gameData, player *playerData) {
-	fmt.Printf("Current APR %0.2f%%\n", game.APR)
+func takeLoan(data cData) {
+	fmt.Printf("Current APR %0.2f%%\n", data.game.APR)
 
-	numLoans := player.getLoanCount()
+	numLoans := data.player.getLoanCount()
 
-	maxLoan := player.calcMaxLoan(game)
-	if maxLoan < 1.00 || numLoans > game.getSettingInt(SET_MAXLOANNUM) {
+	maxLoan := data.player.calcMaxLoan(data.game)
+	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
 		fmt.Print("Sorry, you have too many loans, the bank refuses.")
 		return
 	}
@@ -70,7 +66,7 @@ func takeLoan(game *gameData, player *playerData) {
 	fmt.Printf("Maximum loan the bank will offer $%0.2f\n", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
-	remainingWeeks := game.NumWeeks - game.Week - 1
+	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
 		fmt.Println("There isn't enough time left in the game for a loan!")
 		return
@@ -78,13 +74,13 @@ func takeLoan(game *gameData, player *playerData) {
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
 	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
 
-	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.Week, TermWeeks: loanTerm}
+	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: data.game.APR, StartWeek: data.game.Week, TermWeeks: loanTerm}
 	totalInterest := newLoan.calcTotalInterest()
 	payments := newLoan.calcLoanPayment()
 
 	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
-		player.Loans = append(player.Loans, newLoan)
-		player.credit(loanAmount)
+		data.player.Loans = append(data.player.Loans, newLoan)
+		data.player.credit(loanAmount)
 	}
 }
 
@@ -267,4 +263,8 @@ func (player *playerData) debit(charge float64) bool {
 	}
 	player.Balance = newAmount
 	return true
+}
+
+func (loan loanData) printLoan(num int) {
+	fmt.Printf("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%\n", num, loan.Starting, loan.Principal, loan.APR)
 }
