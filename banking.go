@@ -65,7 +65,7 @@ func takeLoan(game *gameData, player *playerData) {
 
 	maxLoan := calcMaxLoan(game, player)
 	if maxLoan < 1.00 || numLoans > game.getSettingInt(SET_MAXLOANNUM) {
-		fmt.Print("Sorry, the bank refuses to loan you any money.")
+		fmt.Print("Sorry, you have too many loans, the bank refuses.")
 		return
 	}
 
@@ -74,7 +74,7 @@ func takeLoan(game *gameData, player *playerData) {
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := game.NumWeeks - game.Week - 1
-	if remainingWeeks <= 0 {
+	if remainingWeeks <= 1 {
 		fmt.Println("There isn't enough time left in the game for a loan!")
 		return
 	}
@@ -95,12 +95,14 @@ func calcMaxLoan(game *gameData, player *playerData) float64 {
 	stockAssets := 0.0
 	debt := 0.0
 
+	//Calculate stock values
 	for _, stock := range player.Stocks {
 		value := game.Stocks[stock.StockID].Price
 		value = roundToCent(value)
 		stockAssets += (value * float64(stock.Shares))
 	}
 
+	//Add up debt
 	for _, loan := range player.Loans {
 		debt += loan.Principal
 	}
@@ -136,7 +138,7 @@ func (player *playerData) loanCharges() {
 
 		player.debit(payment)
 
-		//handle bankrupt
+		//TODO handle bankrupt here
 
 		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
 
