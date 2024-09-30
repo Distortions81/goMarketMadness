@@ -51,7 +51,7 @@ func fixTerm() {
 	fmt.Println("Game will now close.")
 }
 
-func showChange(stock stockData) string {
+func (stock stockData) showChange() string {
 	buf := fmt.Sprintf("%v:", stock.Name)
 	if stock.PriceArrow == TREND_UP || stock.PriceArrow == TREND_DOWN {
 		buf = buf + fmt.Sprintf(" %v$%0.2f to", trendSymbol[stock.PriceArrow], math.Abs(stock.Price-stock.LastPrice))
@@ -67,7 +67,7 @@ func (game *gameData) showStockPrices() {
 		if s > 0 {
 			fmt.Print(" -- ")
 		}
-		fmt.Printf(showChange(stock))
+		fmt.Printf(stock.showChange())
 	}
 	fmt.Println()
 }

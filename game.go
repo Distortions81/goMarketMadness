@@ -25,7 +25,7 @@ func (game *gameData) playGame() {
 		for p, player := range game.Players {
 			game.showStockPrices()
 			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
-			processLoans(game.Players[p])
+			game.Players[p].processLoans()
 			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
@@ -114,9 +114,9 @@ func (game *gameData) setup() {
 	}
 
 	//Init APR
-	game.APR = genLogRand(game,
-		game.getSettingFloat(SET_MAXAPR)-
-			game.getSettingFloat(SET_MINAPR)+
+	game.APR = game.genLogRand(
+		game.getSettingFloat(SET_MAXAPR) -
+			game.getSettingFloat(SET_MINAPR) +
 			game.getSettingFloat(SET_MINAPR))
 	game.APR = roundToCent(game.APR)
 	game.TrendAPR = randBool()

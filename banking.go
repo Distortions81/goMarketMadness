@@ -60,7 +60,7 @@ func takeLoan(game *gameData, player *playerData) {
 
 	numLoans := player.getLoanCount()
 
-	maxLoan := calcMaxLoan(game, player)
+	maxLoan := player.calcMaxLoan(game)
 	if maxLoan < 1.00 || numLoans > game.getSettingInt(SET_MAXLOANNUM) {
 		fmt.Print("Sorry, you have too many loans, the bank refuses.")
 		return
@@ -79,8 +79,8 @@ func takeLoan(game *gameData, player *playerData) {
 	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
 
 	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: game.APR, StartWeek: game.Week, TermWeeks: loanTerm}
-	totalInterest := calcTotalInterest(newLoan)
-	payments := calcLoanPayment(newLoan)
+	totalInterest := newLoan.calcTotalInterest()
+	payments := newLoan.calcLoanPayment()
 
 	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
 		player.Loans = append(player.Loans, newLoan)
@@ -88,7 +88,7 @@ func takeLoan(game *gameData, player *playerData) {
 	}
 }
 
-func calcMaxLoan(game *gameData, player *playerData) float64 {
+func (player *playerData) calcMaxLoan(game *gameData) float64 {
 	stockAssets := 0.0
 	debt := 0.0
 
@@ -118,7 +118,7 @@ func (player *playerData) loanCharges() {
 			continue
 		}
 
-		payment := calcLoanPayment(loan)
+		payment := loan.calcLoanPayment()
 
 		weeklyInterestRate := loan.APR / 100 / 52
 		interestForWeek := loan.Principal * weeklyInterestRate
@@ -153,7 +153,7 @@ func (player *playerData) loanCharges() {
 	}
 }
 
-func calcLoanPayment(loan loanData) float64 {
+func (loan loanData) calcLoanPayment() float64 {
 	weeklyInterestRate := loan.APR / 100 / 52
 	if weeklyInterestRate == 0 {
 		return roundToCent(loan.Starting / float64(loan.TermWeeks))
@@ -167,7 +167,7 @@ func calcLoanPayment(loan loanData) float64 {
 	return roundToCent(weeklyPayment)
 }
 
-func calcTotalInterest(loan loanData) float64 {
+func (loan loanData) calcTotalInterest() float64 {
 	weeklyInterestRate := loan.APR / 100 / 52
 	if weeklyInterestRate == 0 {
 		return 0
@@ -191,7 +191,7 @@ func calcTotalInterest(loan loanData) float64 {
 	return roundToCent(totalInterest)
 }
 
-func processLoans(player *playerData) int {
+func (player *playerData) processLoans() int {
 
 	player.loanCharges()
 
