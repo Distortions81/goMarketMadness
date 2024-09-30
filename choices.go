@@ -21,7 +21,7 @@ var mainChoiceMenu []choiceData = []choiceData{
 }
 
 var bankChoices []choiceData = []choiceData{
-	{Name: "Diplay loans", ChoiceFunc: displayLoans},
+	{Name: "Diplay loans", ChoiceFunc: displayAllLoans},
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
 	{Name: "See account balance", ChoiceFunc: checkBalance},
@@ -52,10 +52,10 @@ func endTurn(game *gameData, player *playerData) {
 func buyShares(game *gameData, player *playerData) {
 	fmt.Printf("\nBuy shares of which stock?\n")
 
-	//Pretty-print list
+	//Print stock list
 	maxLen := 0
 	for _, stock := range game.stocks {
-		maxLen = max(maxLen, len(stock.Name))
+		maxLen = maxInt(maxLen, len(stock.Name))
 	}
 	for s, stock := range game.stocks {
 		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
@@ -69,7 +69,7 @@ func buyShares(game *gameData, player *playerData) {
 		return
 	}
 
-	maxBuy := math.Min(game.gGetFloat(SET_MAXSHARES), maxAfford)
+	maxBuy := math.Min(game.getSettingFloat(SET_MAXSHARES), maxAfford)
 	suggest := math.Min(10, maxBuy)
 
 	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")

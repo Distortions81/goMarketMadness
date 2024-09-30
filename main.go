@@ -15,7 +15,7 @@ func main() {
 	handleExit()
 	setupTerm()
 
-	CallClear()
+	fmt.Print("\033[2J") //Clear screen
 	fmt.Println("Market Madness!")
 	fmt.Println("Press any key to begin.")
 	anyKey()

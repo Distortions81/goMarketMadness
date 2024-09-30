@@ -26,7 +26,6 @@ func anyKey() {
 	if b != '\n' {
 		fmt.Println()
 	}
-	CallSound(50, 3000, 5)
 }
 
 func readLine() string {
@@ -47,8 +46,6 @@ func readLine() string {
 				buffer = buffer[:bLen]
 				fmt.Print("\b \b")
 				continue
-			} else {
-				CallSound(100, 110, 1)
 			}
 		} else if b == '\n' {
 			return string(buffer)

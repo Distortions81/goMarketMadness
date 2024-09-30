@@ -12,7 +12,6 @@ import (
 	"strconv"
 
 	"github.com/faiface/beep"
-	"github.com/faiface/beep/speaker"
 )
 
 const (
@@ -65,7 +64,7 @@ func init() {
 	}
 }
 
-func (game *gameData) gGetInt(id int) int {
+func (game *gameData) getSettingInt(id int) int {
 	for _, item := range game.settings {
 		if item.id == id {
 			val := item.setting
@@ -89,7 +88,7 @@ func (game *gameData) gGetInt(id int) int {
 	return -1
 }
 
-func (game *gameData) gGetFloat(id int) float64 {
+func (game *gameData) getSettingFloat(id int) float64 {
 	for _, item := range game.settings {
 		if item.id == id {
 			val := item.setting
@@ -113,7 +112,7 @@ func (game *gameData) gGetFloat(id int) float64 {
 	return -1
 }
 
-func (game *gameData) gGetString(id int) string {
+func (game *gameData) getSettingString(id int) string {
 	for _, item := range game.settings {
 		if item.id == id {
 			switch v := game.settings[id].setting.(type) {
@@ -134,7 +133,7 @@ func (game *gameData) gGetString(id int) string {
 	return "Error"
 }
 
-func (game *gameData) gPutString(id int, val string) {
+func (game *gameData) putSettingString(id int, val string) {
 	for _, item := range game.settings {
 		if item.id == id {
 			valType := item.setting
@@ -180,9 +179,4 @@ var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
 	"→",
 	"↑",
 	"↓",
-}
-
-func init() {
-	sr = beep.SampleRate(44000)
-	speaker.Init(sr, 4800)
 }

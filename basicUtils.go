@@ -22,6 +22,7 @@ func CallClear() {
 	fmt.Print("\033[2J") //Clear screen
 }
 
+// Beeps
 func CallSound(duration, frequency, volume int) {
 
 	sine, err := generators.SinTone(sr, frequency)
@@ -30,20 +31,4 @@ func CallSound(duration, frequency, volume int) {
 	}
 	tone := beep.Take(sr.N(time.Duration(duration)*time.Millisecond), sine)
 	speaker.Play(tone)
-}
-
-func DisplayAt(row, col int, data string) {
-	row = clamp(row-1, 1, 24)
-	col = clamp(col-1, 1, 28)
-	fmt.Printf("\033[%d;%dH%v", row, col, data)
-}
-
-func SGN(val int) int {
-	if val > 0 {
-		return 1
-	} else if val == 0 {
-		return 0
-	} else {
-		return -1
-	}
 }

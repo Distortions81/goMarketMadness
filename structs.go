@@ -9,14 +9,14 @@
 package main
 
 type gameData struct {
-	players        []*playerData
-	stocks         []stockData
-	stockChoices   []choiceData
-	settings       []settingsData
-	aprHistory     []float64
-	apr, lastAPR   float64
-	trendAPR       bool
-	week, numWeeks int
+	players                    []*playerData
+	stocks                     []stockData
+	stockChoices               []choiceData
+	settings                   []settingsData
+	aprHistory                 []float64
+	apr, lastAPR               float64
+	trendAPR                   bool
+	week, numWeeks, numPlayers int
 }
 
 type settingsData struct {

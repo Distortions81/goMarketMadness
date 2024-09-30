@@ -87,3 +87,32 @@ func getTrend(a, b float64) string {
 		return trendSymbol[0]
 	}
 }
+
+func (game *gameData) promptNumPlayers() {
+	game.numPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
+}
+
+func (game *gameData) createPlayerList(numPlayers int) {
+	game.players = make([]*playerData, numPlayers)
+}
+
+func (game *gameData) showGameStats() {
+	fmt.Print("Game over!\n\nSynopsis:\n")
+	if game.aprHistory[0] < game.apr {
+		fmt.Printf("APR: ↑$%0.2f: $%0.2f\n", game.apr-game.aprHistory[0], game.apr)
+	} else if game.apr < game.aprHistory[0] {
+		fmt.Printf("APR: ↓$%0.2f: $%0.2f\n", game.aprHistory[0]-game.apr, game.apr)
+	} else {
+		fmt.Printf("APR: →$%0.2f\n", game.apr)
+	}
+
+	for _, stock := range game.stocks {
+		if stock.PriceHistory[0] < stock.Price {
+			fmt.Printf("%v: ↑$%0.2f: $%0.2f\n", stock.Name, stock.Price-stock.PriceHistory[0], stock.Price)
+		} else if stock.Price < stock.PriceHistory[0] {
+			fmt.Printf("%v: ↓$%0.2f: $%0.2f\n", stock.Name, stock.PriceHistory[0]-stock.Price, stock.Price)
+		} else {
+			fmt.Printf("%v: →$%0.2f\n", stock.Name, stock.Price)
+		}
+	}
+}
