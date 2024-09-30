@@ -46,8 +46,16 @@ func payLoan(data cData) {
 }
 
 func displayAllLoans(data cData) {
+	count := 0
 	for l, loan := range data.player.Loans {
+		if loan.Complete || loan.Principal <= 0 {
+			continue
+		}
+		count++
 		loan.printLoan(l)
+	}
+	if count == 0 {
+		fmt.Println("You do not have any loans!")
 	}
 }
 
