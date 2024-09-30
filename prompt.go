@@ -94,10 +94,15 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	}
 	result := promptForString("", 0, 3, false, format+question, args...)
 
-	if defaultYes {
-		return result == "" || strings.EqualFold(result, "y") || strings.EqualFold(result, "yes")
+	if result == "" {
+		return defaultYes
+	} else if strings.EqualFold(result, "n") || strings.EqualFold(result, "no") {
+		return false
+	} else if strings.EqualFold(result, "y") || strings.EqualFold(result, "yes") {
+		return true
 	} else {
-		return result != "" || strings.EqualFold(result, "n") || strings.EqualFold(result, "no")
+		fmt.Println("That isn't a valid answer. y or yes, n or no.")
+		return promptForBool(defaultYes, format, args...)
 	}
 }
 
@@ -154,6 +159,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 }
 
 func promptForChoice(game *gameData, player *playerData, options []choiceData) int {
+	player.lastMenu = options
 	fmt.Println("")
 	for i, item := range options {
 		fmt.Printf("%v) %v\n", i+1, item.Name)
@@ -166,7 +172,9 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) i
 			promptForChoice(game, player, choice.Submenu)
 			promptForChoice(game, player, options)
 		} else if choice.ChoiceFunc != nil {
-			choice.ChoiceFunc(cData{game: game, player: player})
+			if !choice.ChoiceFunc(cData{game: game, player: player}) {
+				promptForChoice(game, player, player.lastMenu)
+			}
 		}
 		return num
 	} else {

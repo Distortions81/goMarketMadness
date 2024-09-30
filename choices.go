@@ -45,9 +45,9 @@ type choiceData struct {
 
 	DefaultSetting any
 
-	ChoiceFunc func(data cData)
+	ChoiceFunc func(data cData) bool
 	Submenu    []choiceData
-	Enabled    bool
+	GoBack     bool
 }
 
 type leaderData struct {
@@ -58,7 +58,7 @@ type leaderData struct {
 	NetWorth float64
 }
 
-func leaderboard(data cData) {
+func leaderboard(data cData) bool {
 	var leaderBoard []leaderData
 	for _, player := range data.game.Players {
 		tmp := leaderData{Name: player.Name}
@@ -91,18 +91,24 @@ func leaderboard(data cData) {
 			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
 	}
 
+	if data.game.Week == data.game.NumWeeks+1 {
+		fmt.Printf("\n%v won the game!\n", leaderBoard[0].Name)
+	}
+	return false
 }
 
-func leaveTable(data cData) {
+func leaveTable(data cData) bool {
 	fmt.Printf("Player #%v: (%v) has left the game.\n", data.player.Number, data.player.Name)
 	data.player.Gone = true
+	return true
 }
 
-func endTurn(data cData) {
+func endTurn(data cData) bool {
 	fmt.Printf("Player #%v: (%v) has ended their turn.\n", data.player.Number, data.player.Name)
+	return true
 }
 
-func buyShares(data cData) {
+func buyShares(data cData) bool {
 	fmt.Printf("\nBuy shares of which stock?\n")
 
 	//Print stock list
@@ -120,7 +126,7 @@ func buyShares(data cData) {
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
 		fmt.Printf("You can't afford to buy any shares.")
-		return
+		return false
 	}
 
 	maxBuy := math.Min(data.game.getSettingFloat(SET_MAXSHARES), maxAfford)
@@ -134,9 +140,10 @@ func buyShares(data cData) {
 		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
 		data.player.creditStock(data.game, choice, numShares)
 	}
+	return false
 }
 
-func sellShares(data cData) {
+func sellShares(data cData) bool {
 	fmt.Printf("\nSell shares of which stock?\n")
 
 	//Print stock list
@@ -167,9 +174,10 @@ func sellShares(data cData) {
 		fmt.Printf("Credit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
 		data.player.debitStock(stock.StockID, numShares)
 	}
+	return false
 }
 
-func displayShares(data cData) {
+func displayShares(data cData) bool {
 
 	count := 0
 	fmt.Println()
@@ -186,4 +194,5 @@ func displayShares(data cData) {
 		fmt.Println("You don't have any stock shares at the moment.")
 	}
 	fmt.Println()
+	return false
 }

@@ -35,6 +35,8 @@ type playerData struct {
 
 	Stocks []playerStockData
 	Loans  []loanData
+
+	lastMenu []choiceData
 }
 
 type playerStockData struct {

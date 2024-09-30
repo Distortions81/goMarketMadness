@@ -11,15 +11,16 @@ import (
 	"math/rand"
 )
 
-func checkBalance(data cData) {
+func checkBalance(data cData) bool {
 	fmt.Printf("Available balance: $%0.2f\n", data.player.Balance)
+	return false
 }
 
-func payLoan(data cData) {
+func payLoan(data cData) bool {
 	numLoans := data.player.getLoanCount()
 	if numLoans == 0 {
 		fmt.Println("You don't have any loans.")
-		return
+		return false
 	}
 
 	choice := 1
@@ -35,7 +36,7 @@ func payLoan(data cData) {
 	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
 		fmt.Println("That loan is already paid off.")
-		return
+		return false
 	}
 	loan.printLoan(choice)
 	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
@@ -43,9 +44,10 @@ func payLoan(data cData) {
 	loan.makeLoanPayment(amount)
 	fmt.Printf("Made payment of $%0.2f\n", amount)
 	loan.PaymentHistory = append(loan.PaymentHistory, amount)
+	return false
 }
 
-func displayAllLoans(data cData) {
+func displayAllLoans(data cData) bool {
 	count := 0
 	for l, loan := range data.player.Loans {
 		if loan.Complete || loan.Principal <= 0 {
@@ -57,9 +59,10 @@ func displayAllLoans(data cData) {
 	if count == 0 {
 		fmt.Println("You do not have any loans!")
 	}
+	return false
 }
 
-func takeLoan(data cData) {
+func takeLoan(data cData) bool {
 	fmt.Printf("Current APR %0.2f%%\n", data.game.APR)
 
 	numLoans := data.player.getLoanCount()
@@ -67,7 +70,7 @@ func takeLoan(data cData) {
 	maxLoan := data.player.calcMaxLoan(data.game)
 	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
 		fmt.Print("Sorry, you have too many loans, the bank refuses.")
-		return
+		return false
 	}
 
 	maxLoan = roundToDollar(maxLoan)
@@ -77,7 +80,7 @@ func takeLoan(data cData) {
 	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
 		fmt.Println("There isn't enough time left in the game for a loan!")
-		return
+		return false
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
 	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
@@ -90,6 +93,7 @@ func takeLoan(data cData) {
 		data.player.Loans = append(data.player.Loans, newLoan)
 		data.player.credit(loanAmount)
 	}
+	return false
 }
 
 func (player *playerData) calcMaxLoan(game *gameData) float64 {

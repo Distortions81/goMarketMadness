@@ -126,5 +126,6 @@ func (game *gameData) showGameStats() {
 		}
 	}
 
+	game.Week++
 	leaderboard(cData{game: game, player: nil})
 }
