@@ -23,16 +23,16 @@ func (game *gameData) playGame() {
 				continue
 			}
 			game.showStockPrices()
-			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
+			printfln("\nPlayer #%v: (%v), it is your turn!", p+1, player.Name)
 			game.Players[p].processLoans()
-			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
+			printfln("Bank balance: $%0.2f", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 
 		if game.Week == game.NumWeeks {
-			fmt.Println("\n** LAST WEEK!!! ***")
+			println("\n** LAST WEEK!!! ***")
 		} else {
-			fmt.Printf("\n*** WEEK %v of %v has begun! ***\n", game.Week, game.NumWeeks)
+			printfln("\n*** WEEK %v of %v has begun! ***", game.Week, game.NumWeeks)
 		}
 		game.tickStocks()
 		game.tickAPR()

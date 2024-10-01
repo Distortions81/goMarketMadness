@@ -6,7 +6,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"sort"
 )
@@ -85,31 +84,31 @@ func leaderboard(data cData) bool {
 		return leaderBoard[i].NetWorth > leaderBoard[j].NetWorth
 	})
 
-	fmt.Println("\nLeaderboard:")
+	println("\nLeaderboard:")
 	for v, victim := range leaderBoard {
-		fmt.Printf("#%v -- %v: Stocks: %v, Bank: %v, Debts: %v, Net: %v\n",
+		printfln("#%v -- %v: Stocks: %v, Bank: %v, Debts: %v, Net: %v",
 			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
 	}
 
 	if data.game.Week == data.game.NumWeeks+1 {
-		fmt.Printf("\n%v won the game!\n", leaderBoard[0].Name)
+		printfln("\n%v won the game!", leaderBoard[0].Name)
 	}
 	return false
 }
 
 func leaveTable(data cData) bool {
-	fmt.Printf("Player #%v: (%v) has left the game.\n", data.player.Number, data.player.Name)
+	printfln("Player #%v: (%v) has left the game.", data.player.Number, data.player.Name)
 	data.player.Gone = true
 	return true
 }
 
 func endTurn(data cData) bool {
-	fmt.Printf("Player #%v: (%v) has ended their turn.\n", data.player.Number, data.player.Name)
+	printfln("Player #%v: (%v) has ended their turn.", data.player.Number, data.player.Name)
 	return true
 }
 
 func buyShares(data cData) bool {
-	fmt.Printf("\nBuy shares of which stock?\n")
+	printfln("\nBuy shares of which stock?")
 
 	//Print stock list
 	maxLen := 0
@@ -117,7 +116,7 @@ func buyShares(data cData) bool {
 		maxLen = maxInt(maxLen, len(stock.Name))
 	}
 	for s, stock := range data.game.Stocks {
-		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
+		printfln("%v) %*v -- $%0.2f", s+1, maxLen, stock.Name, stock.Price)
 	}
 
 	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Buy which stock?")
@@ -125,7 +124,7 @@ func buyShares(data cData) bool {
 	maxAfford := math.Floor(data.player.Balance / data.game.Stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
-		fmt.Printf("You can't afford to buy any shares.")
+		printfln("You can't afford to buy any shares.")
 		return false
 	}
 
@@ -137,14 +136,14 @@ func buyShares(data cData) bool {
 	checkBalance(data)
 	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
 		data.player.debit(dollarValue)
-		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
+		printfln("Debit: $%0.2f, New balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.creditStock(data.game, choice, numShares)
 	}
 	return false
 }
 
 func sellShares(data cData) bool {
-	fmt.Printf("\nSell shares of which stock?\n")
+	printfln("\nSell shares of which stock?")
 
 	//Print stock list
 	maxLen := 0
@@ -159,7 +158,7 @@ func sellShares(data cData) bool {
 			continue
 		}
 		dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
-		fmt.Printf("%v) %*v -- (%v shares) $%0.2f\n", s+1,
+		printfln("%v) %*v -- (%v shares) $%0.2f", s+1,
 			maxLen, stock.Name, stock.Shares, dollarValue)
 	}
 
@@ -171,7 +170,7 @@ func sellShares(data cData) bool {
 	dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(numShares))
 	if promptForBool(false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
 		data.player.credit(dollarValue)
-		fmt.Printf("Credit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
+		printfln("Credit: $%0.2f, New balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.debitStock(stock.StockID, numShares)
 	}
 	return false
@@ -180,19 +179,18 @@ func sellShares(data cData) bool {
 func displayShares(data cData) bool {
 
 	count := 0
-	fmt.Println()
+	println("")
 	for _, stock := range data.player.Stocks {
 		if stock.Shares <= 0 {
 			continue
 		}
-		fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
+		printfln("Stock %v, %v shares. Current value: $%0.2f",
 			stock.Name, stock.Shares, float64(stock.Shares)*data.game.Stocks[stock.StockID].Price)
 		count++
 	}
 
 	if count == 0 {
-		fmt.Println("You don't have any stock shares at the moment.")
+		println("You don't have any stock shares at the moment.")
 	}
-	fmt.Println()
 	return false
 }

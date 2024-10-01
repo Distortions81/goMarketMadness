@@ -12,14 +12,14 @@ import (
 )
 
 func checkBalance(data cData) bool {
-	fmt.Printf("Available balance: $%0.2f\n", data.player.Balance)
+	printfln("Available balance: $%0.2f", data.player.Balance)
 	return false
 }
 
 func payLoan(data cData) bool {
 	numLoans := data.player.getLoanCount()
 	if numLoans == 0 {
-		fmt.Println("You don't have any loans.")
+		println("You don't have any loans.")
 		return false
 	}
 
@@ -35,14 +35,14 @@ func payLoan(data cData) bool {
 	}
 	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
-		fmt.Println("That loan is already paid off.")
+		println("That loan is already paid off.")
 		return false
 	}
 	loan.printLoan(choice)
 	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
 	data.player.debit(amount)
 	loan.makeLoanPayment(amount)
-	fmt.Printf("Made payment of $%0.2f\n", amount)
+	printfln("Made payment of $%0.2f", amount)
 	loan.PaymentHistory = append(loan.PaymentHistory, amount)
 	return false
 }
@@ -57,29 +57,29 @@ func displayAllLoans(data cData) bool {
 		loan.printLoan(l)
 	}
 	if count == 0 {
-		fmt.Println("You do not have any loans!")
+		println("You do not have any loans!")
 	}
 	return false
 }
 
 func takeLoan(data cData) bool {
-	fmt.Printf("Current APR %0.2f%%\n", data.game.APR)
+	printfln("Current APR %0.2f%%", data.game.APR)
 
 	numLoans := data.player.getLoanCount()
 
 	maxLoan := data.player.calcMaxLoan(data.game)
 	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
-		fmt.Print("Sorry, you have too many loans, the bank refuses.")
+		println("Sorry, you have too many loans, the bank refuses.")
 		return false
 	}
 
 	maxLoan = roundToDollar(maxLoan)
-	fmt.Printf("Maximum loan the bank will offer $%0.2f\n", maxLoan)
+	printfln("Maximum loan the bank will offer $%0.2f", maxLoan)
 	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
-		fmt.Println("There isn't enough time left in the game for a loan!")
+		println("There isn't enough time left in the game for a loan!")
 		return false
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
@@ -151,12 +151,12 @@ func (player *playerData) loanCharges() {
 
 		player.Loans[l].makeLoanPayment(principalPayment)
 
-		fmt.Printf("Loan #%v: Payment: $%0.2f, Principal: $%0.2f, Interest Charged: $%0.2f\n", l+1, payment, player.Loans[l].Principal, interestForWeek)
+		printfln("Loan #%v: Payment: $%0.2f, Principal: $%0.2f, Interest Charged: $%0.2f", l+1, payment, player.Loans[l].Principal, interestForWeek)
 
 		if player.Loans[l].Principal <= 0.01 {
 			player.Loans[l].Principal = 0
 			player.Loans[l].Complete = true
-			fmt.Printf("Loan #%v is now paid off.\n", l+1)
+			printfln("Loan #%v is now paid off.", l+1)
 		}
 	}
 }
@@ -233,9 +233,9 @@ func (game *gameData) tickAPR() {
 	game.APR = roundToCent(game.APR)
 
 	if game.LastAPR > game.APR {
-		fmt.Printf("APR %v%0.2f%% to %0.2f%%\n", trendSymbol[2], game.LastAPR-game.APR, game.APR)
+		printfln("APR %v%0.2f%% to %0.2f%%", trendSymbol[2], game.LastAPR-game.APR, game.APR)
 	} else if game.APR > game.LastAPR {
-		fmt.Printf("APR %v%0.2f%% to %0.2f%%\n", trendSymbol[1], game.APR-game.LastAPR, game.APR)
+		printfln("APR %v%0.2f%% to %0.2f%%", trendSymbol[1], game.APR-game.LastAPR, game.APR)
 	}
 
 	game.APRHistory = append(game.APRHistory, game.APR)
@@ -278,5 +278,5 @@ func (player *playerData) debit(charge float64) bool {
 }
 
 func (loan loanData) printLoan(num int) {
-	fmt.Printf("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%\n", num, loan.Starting, loan.Principal, loan.APR)
+	printfln("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%", num, loan.Starting, loan.Principal, loan.APR)
 }

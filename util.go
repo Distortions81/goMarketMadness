@@ -48,7 +48,7 @@ func handleExit() {
 
 func fixTerm() {
 	exec.Command("stty", "-F", "/dev/tty", "sane").Run()
-	fmt.Println("Game will now close.")
+	println("Game will now close.")
 }
 
 func (stock stockData) showChange() string {
@@ -62,14 +62,10 @@ func (stock stockData) showChange() string {
 }
 
 func (game *gameData) showStockPrices() {
-	fmt.Print("Stock prices: ")
-	for s, stock := range game.Stocks {
-		if s > 0 {
-			fmt.Print(" -- ")
-		}
-		fmt.Printf(stock.showChange())
+	printfln("Stock prices: ")
+	for _, stock := range game.Stocks {
+		printfln(stock.showChange())
 	}
-	fmt.Println()
 }
 
 func (game *gameData) tickStocks() {
@@ -107,22 +103,22 @@ func (game *gameData) createPlayerList(numPlayers int) {
 }
 
 func (game *gameData) showGameStats() {
-	fmt.Print("Game over!\n\nSynopsis:\n")
+	printfln("Game over!\n\nSynopsis:")
 	if game.APRHistory[0] < game.APR {
-		fmt.Printf("APR: %v$%0.2f: $%0.2f\n", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
+		printfln("APR: %v$%0.2f: $%0.2f", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
 	} else if game.APR < game.APRHistory[0] {
-		fmt.Printf("APR: %v$%0.2f: $%0.2f\n", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
+		printfln("APR: %v$%0.2f: $%0.2f", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
 	} else {
-		fmt.Printf("APR: %v$%0.2f\n", trendSymbol[0], game.APR)
+		printfln("APR: %v$%0.2f", trendSymbol[0], game.APR)
 	}
 
 	for _, stock := range game.Stocks {
 		if stock.PriceHistory[0] < stock.Price {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
+			printfln("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
 		} else if stock.Price < stock.PriceHistory[0] {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
+			printfln("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
 		} else {
-			fmt.Printf("%v: %v$%0.2f\n", stock.Name, trendSymbol[0], stock.Price)
+			printfln("%v: %v$%0.2f", stock.Name, trendSymbol[0], stock.Price)
 		}
 	}
 

@@ -5,18 +5,52 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
+
+var (
+	sOut []string
+
+	sInBuf,
+	sLine string
+	sRune  []rune
+	sDirty bool
+)
 
 func main() {
-	defer fixTerm()
-	handleExit()
-	setupTerm()
-
-	fmt.Print("\033[2J") //Clear screen
-	fmt.Println("Market Madness!")
-	fmt.Println("Press any key to begin.")
-	anyKey()
 
 	newGame := &gameData{Settings: defSettings}
-	newGame.playGame()
+	go newGame.playGame()
+
+	startEbiten()
+}
+
+var (
+	outputLock,
+	inputLock sync.Mutex
+)
+
+func printf(format string, args ...interface{}) {
+	outputLock.Lock()
+	defer outputLock.Unlock()
+
+	buf := fmt.Sprintf(format, args...)
+	sOut = append(sOut, buf)
+}
+
+func printfln(format string, args ...interface{}) {
+	outputLock.Lock()
+	defer outputLock.Unlock()
+
+	buf := fmt.Sprintf(format, args...)
+	sOut = append(sOut, buf+"\n")
+}
+
+func println(output string) {
+	outputLock.Lock()
+	defer outputLock.Unlock()
+
+	sOut = append(sOut, output+"\n")
 }
