@@ -12,14 +12,18 @@ import (
 const (
 	screenWidth  = 256 * 2
 	screenHeight = 192 * 2
-	screenLines  = 24
+
+	screenLines = 24
+	screenScale = 2
+
+	GameTPS = 8
 )
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30
-		interval = 3
+		interval = 15
 	)
 	d := inpututil.KeyPressDuration(key)
 	if d == 1 {
@@ -83,9 +87,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func startEbiten() {
 	g := &Game{}
 
-	ebiten.SetWindowSize(screenWidth*4, screenHeight*4)
+	ebiten.SetTPS(ebiten.SyncWithFPS)
+	ebiten.SetWindowSize(screenWidth*screenScale, screenHeight*screenScale)
 	ebiten.SetWindowTitle("Market Madness")
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
+
 }

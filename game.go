@@ -40,9 +40,7 @@ func (game *gameData) playGame() {
 
 	game.showGameStats()
 
-	if promptForBool(false, "\nPlay again?") {
-		game.playGame()
-	}
+	game.playGame()
 }
 
 func (game *gameData) setup() {
