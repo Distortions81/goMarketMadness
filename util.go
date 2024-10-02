@@ -6,6 +6,7 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -35,6 +36,12 @@ func handleExit() {
 	}()
 }
 
+func (game *gameData) genLogRand(max float64) float64 {
+	u := rand.Float64()
+
+	return float64(max) * math.Log(1+u) / math.Log(game.getSettingFloat(SET_RANDLOG))
+}
+
 func NumOnly(str string) string {
 	alphafilter, _ := regexp.Compile("[^0-9.]+")
 	str = alphafilter.ReplaceAllString(str, "")
@@ -45,6 +52,18 @@ func randBool() bool {
 	return rand.Float64() <= 0.5
 }
 
+func roundToCent(price float64) float64 {
+	return (math.Round(price*100) / 100)
+}
+
+func floorToCent(price float64) float64 {
+	return (math.Floor(price*100) / 100)
+}
+
+func roundToDollar(price float64) float64 {
+	return (math.Floor(price*10000) / 10000)
+}
+
 func getTrend(a, b float64) string {
 	if a > b {
 		return trendSymbol[1]
@@ -53,36 +72,4 @@ func getTrend(a, b float64) string {
 	} else {
 		return trendSymbol[0]
 	}
-}
-
-func (game *gameData) promptNumPlayers() {
-	game.NumPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
-}
-
-func (game *gameData) createPlayerList(numPlayers int) {
-	game.Players = make([]*playerData, numPlayers)
-}
-
-func (game *gameData) showGameStats() {
-	printfLn("Game over!\n\nSynopsis:")
-	if game.APRHistory[0] < game.APR {
-		printfLn("APR: %v$%0.2f: $%0.2f", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
-	} else if game.APR < game.APRHistory[0] {
-		printfLn("APR: %v$%0.2f: $%0.2f", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
-	} else {
-		printfLn("APR: %v$%0.2f", trendSymbol[0], game.APR)
-	}
-
-	for _, stock := range game.Stocks {
-		if stock.PriceHistory[0] < stock.Price {
-			printfLn("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
-		} else if stock.Price < stock.PriceHistory[0] {
-			printfLn("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
-		} else {
-			printfLn("%v: %v$%0.2f", stock.Name, trendSymbol[0], stock.Price)
-		}
-	}
-
-	game.Week++
-	leaderboard(cData{game: game, player: nil})
 }

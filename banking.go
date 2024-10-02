@@ -10,12 +10,12 @@ import (
 	"math"
 )
 
-func checkBalance(data cData) bool {
+func accBalance(data cData) bool {
 	printfLn("Available balance: $%0.2f", data.player.Balance)
 	return false
 }
 
-func displayAllLoans(data cData) bool {
+func printLoans(data cData) bool {
 	count := 0
 	for l, loan := range data.player.Loans {
 		if loan.Complete || loan.Principal <= 0 {
@@ -66,7 +66,7 @@ func takeLoan(data cData) bool {
 
 	numLoans := data.player.getLoanCount()
 
-	maxLoan := data.player.calcMaxLoan(data.game)
+	maxLoan := data.player.maxLoanAmount(data.game)
 	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
 		printLn("Sorry, you have too many loans!")
 		return false
@@ -95,7 +95,7 @@ func takeLoan(data cData) bool {
 	return false
 }
 
-func (player *playerData) calcMaxLoan(game *gameData) float64 {
+func (player *playerData) maxLoanAmount(game *gameData) float64 {
 	stockAssets := 0.0
 	debt := 0.0
 

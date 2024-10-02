@@ -90,3 +90,11 @@ func (game *gameData) setup() {
 	game.TrendAPR = randBool()
 
 }
+
+func (game *gameData) promptNumPlayers() {
+	game.NumPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
+}
+
+func (game *gameData) createPlayerList(numPlayers int) {
+	game.Players = make([]*playerData, numPlayers)
+}

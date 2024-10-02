@@ -14,10 +14,10 @@ var mainChoiceMenu []choiceData = []choiceData{
 }
 
 var bankChoices []choiceData = []choiceData{
-	{Name: "Diplay loans", ChoiceFunc: displayAllLoans},
+	{Name: "Diplay loans", ChoiceFunc: printLoans},
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
-	{Name: "See account balance", ChoiceFunc: checkBalance},
+	{Name: "See account balance", ChoiceFunc: accBalance},
 	{Name: "Go back"},
 }
 

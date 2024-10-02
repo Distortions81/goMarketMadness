@@ -27,7 +27,7 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 }
 
 type ebitenGame struct {
-	g *gameData
+	game *gameData
 }
 
 func (g *ebitenGame) Update() error {
@@ -71,13 +71,9 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	if buf != "" && time.Now().UnixMilli()/500%2 == 0 {
 		blen := len(buf) - 1
 		cur := string(rune(cursorChar))
-		if buf[blen] == '\n' {
-			drawText(screen, buf[:blen]+cur+consoleIn, xMargin/2, yMargin/2)
-		} else {
-			drawText(screen, buf+consoleIn, xMargin/2, yMargin/2)
-		}
+		drawText(screen, buf[:blen]+cur+consoleIn, xMargin/2, yMargin/2)
 	} else {
-		drawText(screen, buf+consoleIn, xMargin/2, yMargin/2)
+		drawText(screen, buf+" "+consoleIn, xMargin/2, yMargin/2)
 	}
 }
 
@@ -114,7 +110,7 @@ func (g *ebitenGame) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func startEbiten(game *gameData) {
-	g := &ebitenGame{g: game}
+	g := &ebitenGame{game: game}
 
 	//fmt.Printf("%v, %v\n", screenWidth/fontScale, screenHeight/fontScale)
 	ebiten.SetVsyncEnabled(true)

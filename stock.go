@@ -71,18 +71,6 @@ func (stock *stockData) setPrice(price float64) {
 	stock.Price = roundToCent(price)
 }
 
-func roundToCent(price float64) float64 {
-	return (math.Round(price*100) / 100)
-}
-
-func floorToCent(price float64) float64 {
-	return (math.Floor(price*100) / 100)
-}
-
-func roundToDollar(price float64) float64 {
-	return (math.Floor(price*10000) / 10000)
-}
-
 func (player *playerData) creditStock(game *gameData, stockNum, numShares int) {
 	for s, stock := range player.Stocks {
 		if stock.StockID == stockNum {

@@ -8,6 +8,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+const fontPath = "data/fonts/font.png"
+
 var (
 	//go:embed data
 	f       embed.FS
@@ -15,12 +17,12 @@ var (
 )
 
 func init() {
-	file, err := f.Open("data/fonts/font.png")
+	file, err := f.Open(fontPath)
 	if err != nil {
-		log.Fatal("Can't read ti font.")
+		log.Fatal("Could not read: " + fontPath)
 	}
 	fontImg, _, err = ebitenutil.NewImageFromReader(file)
 	if err != nil {
-		log.Fatal("Can't parse ti font image.")
+		log.Fatal("Could not parse: " + fontPath)
 	}
 }
