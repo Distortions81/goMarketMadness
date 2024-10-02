@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-var gReady bool
-
 func (game *gameData) playGame() {
 
 	countDown := 3

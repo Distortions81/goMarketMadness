@@ -14,6 +14,8 @@ type gameData struct {
 	APR, LastAPR               float64
 	TrendAPR                   bool
 	Week, NumWeeks, NumPlayers int
+
+	showCursor bool
 }
 
 type settingsData struct {

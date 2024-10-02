@@ -59,7 +59,7 @@ func buyShares(data cData) bool {
 		printfLn("%v) %*v $%0.2f", s+1, maxLen, stock.Name, stock.Price)
 	}
 
-	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Buy which stock?")
+	choice := promptForInteger(data.game, false, 1, 1, len(data.game.Stocks), "Buy which stock?")
 	choice -= 1
 	maxAfford := math.Floor(data.player.Balance / data.game.Stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
@@ -71,10 +71,10 @@ func buyShares(data cData) bool {
 	maxBuy := math.Min(data.game.getSettingFloat(SET_MAXSHARES), maxAfford)
 	suggest := math.Min(10, maxBuy)
 
-	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")
+	numShares := promptForInteger(data.game, true, int(suggest), 1, int(maxBuy), "How many shares?")
 	dollarValue := roundToCent(data.game.Stocks[choice].Price * float64(numShares))
 	accBalance(data)
-	if promptForBool(false, "Buy %v shares of\n%v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
+	if promptForBool(data.game, false, "Buy %v shares of\n%v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
 		data.player.debit(dollarValue)
 		printfLn("Debit: $%0.2f, New balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.creditStock(data.game, choice, numShares)
@@ -102,13 +102,13 @@ func sellShares(data cData) bool {
 			maxLen, stock.Name, stock.Shares, dollarValue)
 	}
 
-	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Sell which stock?")
+	choice := promptForInteger(data.game, false, 1, 1, len(data.game.Stocks), "Sell which stock?")
 	choice -= 1
 	stock := data.player.Stocks[choice]
 	suggest := min(10, float64(stock.Shares))
-	numShares := promptForInteger(true, int(suggest), 1, int(stock.Shares), "How many shares?")
+	numShares := promptForInteger(data.game, true, int(suggest), 1, int(stock.Shares), "How many shares?")
 	dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(numShares))
-	if promptForBool(false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
+	if promptForBool(data.game, false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
 		data.player.credit(dollarValue)
 		printfLn("Credit: $%0.2f\nNew balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.debitStock(stock.StockID, numShares)

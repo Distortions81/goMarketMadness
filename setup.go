@@ -7,8 +7,7 @@ import (
 
 func (game *gameData) setup() {
 
-	gReady = true
-	if promptForBool(false, "Customize game settings?") {
+	if promptForBool(game, false, "Customize game settings?") {
 		//Init settings if needed
 		if len(game.Settings) == 0 {
 			game.Settings = defSettings
@@ -19,7 +18,7 @@ func (game *gameData) setup() {
 			if item.Hide {
 				continue
 			}
-			input := promptForString(game.getSettingString(item.ID), 0, 64, false, "%v: [%v] ", item.Name, item.DefSetting)
+			input := promptForString(game, game.getSettingString(item.ID), 0, 64, false, "%v: [%v] ", item.Name, item.DefSetting)
 			game.putSettingString(item.ID, input)
 		}
 	} else {
@@ -33,7 +32,7 @@ func (game *gameData) setup() {
 		game.promptNumPlayers()
 		game.createPlayerList(game.NumPlayers)
 	} else {
-		if !promptForBool(false, "Play again with same %v players?", numPlayers) {
+		if !promptForBool(game, false, "Play again with same %v players?", numPlayers) {
 			game.promptNumPlayers()
 			game.Players = make([]*playerData, numPlayers)
 		}
@@ -57,14 +56,14 @@ func (game *gameData) setup() {
 		if game.Players[p].Name == "" {
 			//Prompt for name
 			pName := fmt.Sprintf("Player-%v", p+1)
-			game.Players[p].Name = promptForString(pName, 0, game.getSettingInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
+			game.Players[p].Name = promptForString(game, pName, 0, game.getSettingInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
 		}
 		//Give starting money
 		game.Players[p].Balance = game.getSettingFloat(SET_STARTMONEY)
 	}
 
 	//Prompt for game length
-	game.NumWeeks = promptForInteger(true, game.getSettingInt(SET_DEFAULT_WEEKS), 4, game.getSettingInt(SET_MAXWEEKS), "How many weeks?")
+	game.NumWeeks = promptForInteger(game, true, game.getSettingInt(SET_DEFAULT_WEEKS), 4, game.getSettingInt(SET_MAXWEEKS), "How many weeks?")
 
 	//Init stocks
 	game.Stocks = defaultStocks
@@ -92,7 +91,7 @@ func (game *gameData) setup() {
 }
 
 func (game *gameData) promptNumPlayers() {
-	game.NumPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
+	game.NumPlayers = promptForInteger(game, true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
 }
 
 func (game *gameData) createPlayerList(numPlayers int) {

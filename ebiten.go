@@ -31,7 +31,7 @@ type ebitenGame struct {
 }
 
 func (g *ebitenGame) Update() error {
-	if !gReady {
+	if !g.game.showCursor {
 		return nil
 	}
 
@@ -68,12 +68,16 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	showLines := lines[startLine:]
 	buf := strings.Join(showLines, "\n")
 
-	if buf != "" && time.Now().UnixMilli()/500%2 == 0 {
+	if buf != "" && g.game.showCursor {
 		blen := len(buf) - 1
-		cur := string(rune(cursorChar))
-		drawText(screen, buf[:blen]+cur+consoleIn, xMargin/2, yMargin/2)
+
+		cur := " "
+		if time.Now().UnixMilli()/500%2 == 0 {
+			cur = string(rune(cursorChar))
+		}
+		drawText(screen, buf[:blen]+" "+consoleIn+cur, xMargin/2, yMargin/2)
 	} else {
-		drawText(screen, buf+" "+consoleIn, xMargin/2, yMargin/2)
+		drawText(screen, buf, xMargin/2, yMargin/2)
 	}
 }
 

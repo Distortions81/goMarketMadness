@@ -45,7 +45,7 @@ func payLoan(data cData) bool {
 			}
 			loan.printLoan(l)
 		}
-		choice = promptForInteger(false, 1, 1, numLoans, "Which loan do you want to make a payment on?")
+		choice = promptForInteger(data.game, false, 1, 1, numLoans, "Which loan do you want to make a payment on?")
 	}
 	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
@@ -53,7 +53,7 @@ func payLoan(data cData) bool {
 		return false
 	}
 	loan.printLoan(choice)
-	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
+	amount := promptForMoney(data.game, "How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
 	data.player.debit(amount)
 	loan.makeLoanPayment(amount)
 	printfLn("Made payment of $%0.2f", amount)
@@ -74,7 +74,7 @@ func takeLoan(data cData) bool {
 
 	maxLoan = roundToDollar(maxLoan)
 	printfLn("Maximum loan $%0.2f", maxLoan)
-	loanAmount := promptForMoney("Borrow how much?", maxLoan, 1.00, maxLoan)
+	loanAmount := promptForMoney(data.game, "Borrow how much?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
@@ -82,13 +82,13 @@ func takeLoan(data cData) bool {
 		return false
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
-	loanTerm := promptForInteger(true, remainingWeeks, 1, remainingWeeks, prompt)
+	loanTerm := promptForInteger(data.game, true, remainingWeeks, 1, remainingWeeks, prompt)
 
 	newLoan := loanData{Starting: loanAmount, Principal: loanAmount, APR: data.game.APR, StartWeek: data.game.Week, TermWeeks: loanTerm}
 	totalInterest := newLoan.calcTotalInterest()
 	payments := newLoan.calcLoanPayment()
 
-	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks.\nWeekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
+	if promptForBool(data.game, false, "Loan terms: Total interest: $%0.2f over %v weeks.\nWeekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
 		data.player.Loans = append(data.player.Loans, newLoan)
 		data.player.credit(loanAmount)
 	}

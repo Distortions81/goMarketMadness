@@ -11,7 +11,7 @@ func leaveTable(data cData) bool {
 }
 
 func endTurn(data cData) bool {
-	printfLn("Player #%v: %v\nHas ended their turn.", data.player.Number, data.player.Name)
+	printfLn("Player #%v: %v\nHas ended their turn.\n", data.player.Number, data.player.Name)
 	return true
 }
 
