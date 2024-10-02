@@ -10,22 +10,22 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-const (
+var (
 	fontScale             = 2
 	fontSizeX, fontSizeY  = 16, 16
 	termWidth, termHeight = 32, 24
 
-	xMarginPercent = 40
-	yMarginPercent = 40
+	xMarginPercent = 0.05
+	yMarginPercent = 0.05
 
 	baseX = (fontSizeX / fontScale) * termWidth
 	baseY = (fontSizeY / fontScale) * (termHeight - 1)
 
-	xMargin = (baseX / xMarginPercent)
-	yMargin = (baseY / yMarginPercent)
+	xMargin = int(float64(baseX*fontScale) * xMarginPercent)
+	yMargin = int(float64(baseY*fontScale) * yMarginPercent)
 
-	screenWidth  = (baseX + xMargin) * fontScale
-	screenHeight = (baseY + yMargin) * fontScale
+	screenWidth  = int(baseX+xMargin) * fontScale
+	screenHeight = int(baseY+yMargin) * fontScale
 
 	screenScale = 2
 )
@@ -96,7 +96,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	buf := strings.Join(showLines, "\n")
 
 	//ebitenutil.DebugPrint(screen, buf+sInBuf)
-	drawText(screen, buf, xMargin/2, yMargin/2)
+	drawText(screen, buf, xMargin, yMargin)
 }
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
@@ -127,7 +127,8 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 
 		op := &ebiten.DrawImageOptions{}
 		op.Filter = ebiten.FilterNearest
-		op.GeoM.Translate(float64(x)+float64(col*fontSizeX)-fontSizeX, float64(y)+float64(row*fontSizeY))
+		op.GeoM.Translate(float64(x)+float64(col*fontSizeX)-float64(fontSizeX),
+			float64(y)+float64(row*fontSizeY))
 		screen.DrawImage(subImage, op)
 	}
 }
