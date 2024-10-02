@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"log"
@@ -11,15 +12,17 @@ import (
 )
 
 var (
-	fontScale             = 2
-	fontSizeX, fontSizeY  = 16, 16
+	screenScale = 3
+
+	fontScale             = 1
+	fontSizeX, fontSizeY  = 8 * fontScale, 8 * fontScale
 	termWidth, termHeight = 32, 24
 
-	xMarginPercent = 0.1
-	yMarginPercent = 0.1
+	xMarginPercent = 0.153
+	yMarginPercent = 0.153
 
 	baseX = (fontSizeX / fontScale) * termWidth
-	baseY = (fontSizeY / fontScale) * (termHeight - 1)
+	baseY = (fontSizeY + 1/fontScale) * (termHeight - 1)
 
 	xMargin = int(float64(baseX*fontScale) * xMarginPercent)
 	yMargin = int(float64(baseY*fontScale) * yMarginPercent)
@@ -27,12 +30,10 @@ var (
 	screenWidth  = int(baseX+xMargin) * fontScale
 	screenHeight = int(baseY+yMargin) * fontScale
 
-	screenScale = 2
-)
-
-var (
 	colorBG = color.NRGBA{R: 65, G: 232, B: 240, A: 255}
 	colorFG = color.NRGBA{R: 0, G: 0, B: 0, A: 255}
+
+	xoff, yoff = 0, 0
 )
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
@@ -96,7 +97,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	buf := strings.Join(showLines, "\n")
 
 	//ebitenutil.DebugPrint(screen, buf+sInBuf)
-	drawText(screen, buf, xMargin, yMargin)
+	drawText(screen, buf, xMargin/2, yMargin/2)
 }
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
@@ -120,7 +121,7 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 		cx, cy := (start%32)*fontSizeX, (start/32)*fontSizeY
 
 		// Define the rectangle for the sub-region
-		rect := image.Rect(cx, cy, cx+fontSizeX, cy+fontSizeY)
+		rect := image.Rect(cx-xoff, cy-yoff, cx+fontSizeX-xoff, cy+fontSizeY-yoff)
 
 		// Use SubImage and type assert the result to *ebiten.Image
 		subImage := fontImg.SubImage(rect).(*ebiten.Image)
@@ -128,7 +129,7 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 		op := &ebiten.DrawImageOptions{}
 		op.Filter = ebiten.FilterNearest
 		op.GeoM.Translate(float64(x)+float64(col*fontSizeX)-float64(fontSizeX),
-			float64(y)+float64(row*fontSizeY))
+			float64(y)+float64(row*(fontSizeY+1)))
 		screen.DrawImage(subImage, op)
 	}
 }
@@ -139,6 +140,8 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func startEbiten() {
 	g := &Game{}
+
+	fmt.Printf("%v, %v\n", screenWidth/fontScale, screenHeight/fontScale)
 
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowSize(screenWidth*screenScale, screenHeight*screenScale)
