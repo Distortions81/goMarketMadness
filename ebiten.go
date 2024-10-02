@@ -4,6 +4,7 @@ import (
 	"image"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -32,6 +33,8 @@ var (
 	colorFG = tiColor[1]
 
 	xoff, yoff = 0, 0
+
+	cursorChar = 127
 )
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
@@ -97,8 +100,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	showLines := lines[startLine:]
 	buf := strings.Join(showLines, "\n")
 
-	//ebitenutil.DebugPrint(screen, buf+sInBuf)
-	drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
+	if buf != "" && time.Now().UnixMilli()/500%2 == 0 {
+		blen := len(buf) - 1
+		cur := string(rune(cursorChar))
+		if buf[blen] == '\n' {
+			drawText(screen, buf[:blen]+cur+sInBuf, xMargin/2, yMargin/2)
+		} else {
+			drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
+		}
+	} else {
+		drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
+	}
 }
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
@@ -110,14 +122,16 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 		if char == '\n' {
 			row++
 			col = 0
-		} else if char > '~' || char < ' ' {
+		} else if int(char) > cursorChar || char < ' ' {
 			char = '?'
 		}
 
-		if col > termWidth {
-			row++
-			col = 1
-		}
+		/*
+			if col > termWidth {
+				row++
+				col = 1
+			}
+		*/
 
 		start := int(char - 32)
 		cx, cy := (start%32)*fontSizeX, (start/32)*fontSizeY
