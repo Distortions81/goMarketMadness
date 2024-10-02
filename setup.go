@@ -34,8 +34,9 @@ func (game *gameData) setup() {
 	} else {
 		if !promptForBool(game, false, "Play with same %v players?", numPlayers) {
 			game.promptNumPlayers()
-			game.Players = make([]*playerData, numPlayers)
 		}
+		game.createPlayerList(game.NumPlayers)
+
 	}
 	oldPlayers := game.Players
 

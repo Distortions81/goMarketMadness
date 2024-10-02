@@ -46,9 +46,9 @@ func (game *gameData) playGame() {
 		}
 
 		if game.Week == game.NumWeeks {
-			printLn("\n** LAST WEEK!!! ***")
+			printLn("** LAST WEEK!!! ***")
 		} else {
-			printfLn("\n*** WEEK %v of %v ***", game.Week, game.NumWeeks)
+			printfLn("*** WEEK %v of %v ***", game.Week, game.NumWeeks)
 		}
 		game.tickStocks()
 		game.tickAPR()
@@ -61,11 +61,11 @@ func (game *gameData) playGame() {
 func (game *gameData) showGameStats() {
 	printfLn("Game over!\n\nSynopsis:")
 	if game.APRHistory[0] < game.APR {
-		printfLn("APR: %v$%0.2f: $%0.2f", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
+		printfLn("APR: %v%0.2f%%: $%0.2f", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
 	} else if game.APR < game.APRHistory[0] {
-		printfLn("APR: %v$%0.2f: $%0.2f", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
+		printfLn("APR: %v%0.2f%%: $%0.2f", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
 	} else {
-		printfLn("APR: %v$%0.2f", trendSymbol[0], game.APR)
+		printfLn("APR: %v%0.2f%%", trendSymbol[0], game.APR)
 	}
 
 	for _, stock := range game.Stocks {

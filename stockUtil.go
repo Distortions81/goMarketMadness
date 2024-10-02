@@ -16,7 +16,7 @@ func (stock stockData) showTrend() string {
 }
 
 func (game *gameData) showStockPrices() {
-	printfLn("Stock prices: ")
+	printfLn("")
 	for _, stock := range game.Stocks {
 		printfLn(stock.showTrend())
 	}
