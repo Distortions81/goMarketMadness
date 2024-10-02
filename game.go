@@ -8,11 +8,15 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 func (game *gameData) playGame() {
 
+	time.Sleep(time.Second)
+
 	println("Market Madness!")
+	colorBG = tiColor[C_LGREEN]
 	game.setup()
 
 	//Game loop

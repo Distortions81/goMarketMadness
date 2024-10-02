@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	screenScale = 3
+	screenScale = 4
 
 	fontScale             = 1
 	fontSizeX, fontSizeY  = 8 * fontScale, 8 * fontScale
 	termWidth, termHeight = 32, 24
 
-	xMarginPercent = 0.153
-	yMarginPercent = 0.153
+	xMarginPercent = 0.1640
+	yMarginPercent = 0.1640
 
 	baseX = (fontSizeX / fontScale) * termWidth
 	baseY = (fontSizeY + 1/fontScale) * (termHeight - 1)

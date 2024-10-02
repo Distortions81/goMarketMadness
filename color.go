@@ -20,3 +20,22 @@ var tiColor []color.NRGBA = []color.NRGBA{
 	{R: 204, G: 204, B: 204, A: 255}, //14 gray
 	{R: 255, G: 255, B: 255, A: 255}, //15 white
 }
+
+const (
+	C_CLEAR = iota
+	C_BLACK
+	C_LGREEN
+	C_MGREEN
+	C_DBLUE
+	C_LBLUE
+	C_DRED
+	C_CYAN
+	C_MRED
+	C_LRED
+	C_DYELLOW
+	C_LYELLOW
+	C_DGREEN
+	C_MAGENTA
+	C_GRAY
+	C_WHITE
+)
