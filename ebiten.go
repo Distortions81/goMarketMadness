@@ -15,8 +15,8 @@ var (
 	fontSizeX, fontSizeY  = 16, 16
 	termWidth, termHeight = 32, 24
 
-	xMarginPercent = 0.05
-	yMarginPercent = 0.05
+	xMarginPercent = 0.1
+	yMarginPercent = 0.1
 
 	baseX = (fontSizeX / fontScale) * termWidth
 	baseY = (fontSizeY / fontScale) * (termHeight - 1)
