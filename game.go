@@ -11,12 +11,24 @@ import (
 	"time"
 )
 
+var gReady bool
+
 func (game *gameData) playGame() {
 
-	time.Sleep(time.Second)
-
-	println("Market Madness!")
+	countDown := 5
+	for x := 0; x < countDown; x++ {
+		CallClear()
+		println("Byte-99/4U")
+		//		println("Copyright 2024 Carl Otto III")
+		//		println("All rights reserved.")
+		printfln("\nLoading %v...", countDown-x)
+		time.Sleep(time.Second)
+	}
+	CallClear()
+	time.Sleep(time.Millisecond * 500)
 	colorBG = tiColor[C_LGREEN]
+	time.Sleep(time.Millisecond * 500)
+	println("Market Madness!")
 	game.setup()
 
 	//Game loop
@@ -50,6 +62,7 @@ func (game *gameData) playGame() {
 
 func (game *gameData) setup() {
 
+	gReady = true
 	if promptForBool(false, "Customize game settings?") {
 		//Init settings if needed
 		if len(game.Settings) == 0 {
@@ -130,4 +143,5 @@ func (game *gameData) setup() {
 			game.getSettingFloat(SET_MINAPR))
 	game.APR = roundToCent(game.APR)
 	game.TrendAPR = randBool()
+
 }

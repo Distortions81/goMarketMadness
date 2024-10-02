@@ -54,6 +54,9 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+	if !gReady {
+		return nil
+	}
 	inputLock.Lock()
 	defer inputLock.Unlock()
 
@@ -95,7 +98,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	buf := strings.Join(showLines, "\n")
 
 	//ebitenutil.DebugPrint(screen, buf+sInBuf)
-	drawText(screen, buf, xMargin/2, yMargin/2)
+	drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
 }
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
