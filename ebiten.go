@@ -10,33 +10,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-var (
-	screenScale = 4
-
-	fontScale             = 1
-	fontSizeX, fontSizeY  = 8 * fontScale, 8 * fontScale
-	termWidth, termHeight = 32, 24
-
-	xMarginPercent = 0.1640
-	yMarginPercent = 0.1640
-
-	baseX = (fontSizeX / fontScale) * termWidth
-	baseY = (fontSizeY + 1/fontScale) * (termHeight - 1)
-
-	xMargin = int(float64(baseX*fontScale) * xMarginPercent)
-	yMargin = int(float64(baseY*fontScale) * yMarginPercent)
-
-	screenWidth  = int(baseX+xMargin) * fontScale
-	screenHeight = int(baseY+yMargin) * fontScale
-
-	colorBG = tiColor[7]
-	colorFG = tiColor[1]
-
-	xoff, yoff = 0, 0
-
-	cursorChar = 127
-)
-
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
@@ -53,43 +26,38 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-type Game struct {
+type ebitenGame struct {
+	g *gameData
 }
 
-func (g *Game) Update() error {
+func (g *ebitenGame) Update() error {
 	if !gReady {
 		return nil
 	}
-	inputLock.Lock()
-	defer inputLock.Unlock()
 
-	sRune = ebiten.AppendInputChars(sRune[:0])
-	sInBuf += string(sRune)
+	cInputRune = ebiten.AppendInputChars(cInputRune[:0])
+	consoleIn += string(cInputRune)
 
 	// If the enter key is pressed, add a line break.
 	if repeatingKeyPressed(ebiten.KeyEnter) || repeatingKeyPressed(ebiten.KeyNumpadEnter) {
-		sLine = sInBuf
-		sInBuf = ""
-		sDirty = true
+		newInput <- consoleIn
+		consoleIn = ""
 	}
 
 	// If the backspace key is pressed, remove one character.
 	if repeatingKeyPressed(ebiten.KeyBackspace) {
-		if len(sInBuf) >= 1 {
-			sInBuf = sInBuf[:len(sInBuf)-1]
+		if len(consoleIn) >= 1 {
+			consoleIn = consoleIn[:len(consoleIn)-1]
 		}
 	}
 
 	return nil
 }
 
-func (g *Game) Draw(screen *ebiten.Image) {
+func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	screen.Fill(colorBG)
 
-	outputLock.Lock()
-	defer outputLock.Unlock()
-
-	inbuf := strings.Join(sOut, "")
+	inbuf := strings.Join(consoleOut, "")
 	lines := strings.Split(inbuf, "\n")
 
 	sLine := len(lines) - termHeight
@@ -104,12 +72,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		blen := len(buf) - 1
 		cur := string(rune(cursorChar))
 		if buf[blen] == '\n' {
-			drawText(screen, buf[:blen]+cur+sInBuf, xMargin/2, yMargin/2)
+			drawText(screen, buf[:blen]+cur+consoleIn, xMargin/2, yMargin/2)
 		} else {
-			drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
+			drawText(screen, buf+consoleIn, xMargin/2, yMargin/2)
 		}
 	} else {
-		drawText(screen, buf+sInBuf, xMargin/2, yMargin/2)
+		drawText(screen, buf+consoleIn, xMargin/2, yMargin/2)
 	}
 }
 
@@ -126,20 +94,11 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 			char = '?'
 		}
 
-		/*
-			if col > termWidth {
-				row++
-				col = 1
-			}
-		*/
-
 		start := int(char - 32)
 		cx, cy := (start%32)*fontSizeX, (start/32)*fontSizeY
 
-		// Define the rectangle for the sub-region
-		rect := image.Rect(cx-xoff, cy-yoff, cx+fontSizeX-xoff, cy+fontSizeY-yoff)
+		rect := image.Rect(cx, cy, cx+fontSizeX, cy+fontSizeY)
 
-		// Use SubImage and type assert the result to *ebiten.Image
 		subImage := fontImg.SubImage(rect).(*ebiten.Image)
 
 		op := &ebiten.DrawImageOptions{}
@@ -150,16 +109,16 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 	}
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+func (g *ebitenGame) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
-func startEbiten() {
-	g := &Game{}
+func startEbiten(game *gameData) {
+	g := &ebitenGame{g: game}
 
 	//fmt.Printf("%v, %v\n", screenWidth/fontScale, screenHeight/fontScale)
 	ebiten.SetVsyncEnabled(true)
-	ebiten.SetWindowSize(screenWidth*screenScale, screenHeight*screenScale)
+	ebiten.SetWindowSize(screenWidth*screenMagnify, screenHeight*screenMagnify)
 	ebiten.SetWindowTitle("Market Madness")
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)

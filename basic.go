@@ -1,10 +1,10 @@
 package main
 
 func CallClear() {
-	outputLock.Lock()
-	defer outputLock.Unlock()
+	consoleOutLock.Lock()
+	defer consoleOutLock.Unlock()
 
-	sOut = []string{}
+	consoleOut = []string{}
 }
 
 func CallBGColor(i int) {

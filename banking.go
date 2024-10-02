@@ -8,18 +8,32 @@ package main
 import (
 	"fmt"
 	"math"
-	"math/rand"
 )
 
 func checkBalance(data cData) bool {
-	printfln("Available balance: $%0.2f", data.player.Balance)
+	printfLn("Available balance: $%0.2f", data.player.Balance)
+	return false
+}
+
+func displayAllLoans(data cData) bool {
+	count := 0
+	for l, loan := range data.player.Loans {
+		if loan.Complete || loan.Principal <= 0 {
+			continue
+		}
+		count++
+		loan.printLoan(l)
+	}
+	if count == 0 {
+		printLn("You do not have any loans!")
+	}
 	return false
 }
 
 func payLoan(data cData) bool {
 	numLoans := data.player.getLoanCount()
 	if numLoans == 0 {
-		println("You don't have any loans.")
+		printLn("You don't have any loans.")
 		return false
 	}
 
@@ -35,51 +49,36 @@ func payLoan(data cData) bool {
 	}
 	loan := data.player.Loans[choice-1]
 	if loan.Principal <= 0 || loan.Complete {
-		println("That loan is already paid off.")
+		printLn("That loan is already paid off.")
 		return false
 	}
 	loan.printLoan(choice)
 	amount := promptForMoney("How much do you want to pay?", loan.Principal, math.Min(10, loan.Principal), math.Min(loan.Principal, data.player.Balance))
 	data.player.debit(amount)
 	loan.makeLoanPayment(amount)
-	printfln("Made payment of $%0.2f", amount)
+	printfLn("Made payment of $%0.2f", amount)
 	loan.PaymentHistory = append(loan.PaymentHistory, amount)
 	return false
 }
 
-func displayAllLoans(data cData) bool {
-	count := 0
-	for l, loan := range data.player.Loans {
-		if loan.Complete || loan.Principal <= 0 {
-			continue
-		}
-		count++
-		loan.printLoan(l)
-	}
-	if count == 0 {
-		println("You do not have any loans!")
-	}
-	return false
-}
-
 func takeLoan(data cData) bool {
-	printfln("Current APR %0.2f%%", data.game.APR)
+	printfLn("Current APR %0.2f%%", data.game.APR)
 
 	numLoans := data.player.getLoanCount()
 
 	maxLoan := data.player.calcMaxLoan(data.game)
 	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
-		println("Sorry, you have too many loans!")
+		printLn("Sorry, you have too many loans!")
 		return false
 	}
 
 	maxLoan = roundToDollar(maxLoan)
-	printfln("Maximum loan $%0.2f", maxLoan)
+	printfLn("Maximum loan $%0.2f", maxLoan)
 	loanAmount := promptForMoney("Borrow how much?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
-		println("Not enough time left!")
+		printLn("Not enough time left!")
 		return false
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
@@ -120,148 +119,6 @@ func (player *playerData) calcMaxLoan(game *gameData) float64 {
 	return maxLoanAmount
 }
 
-func (player *playerData) loanCharges() {
-	for l, loan := range player.Loans {
-		if loan.Complete {
-			continue
-		}
-
-		payment := loan.calcLoanPayment()
-
-		weeklyInterestRate := loan.APR / 100 / 52
-		interestForWeek := loan.Principal * weeklyInterestRate
-
-		if loan.Principal <= payment {
-			payment = loan.Principal + interestForWeek
-		}
-
-		if loan.Principal <= 0 || payment <= 0 {
-			player.Loans[l].Complete = true
-			player.Loans[l].Principal = 0
-			continue
-		}
-
-		player.debit(payment)
-
-		//TODO handle bankrupt here
-
-		player.Loans[l].PaymentHistory = append(loan.PaymentHistory, payment)
-
-		principalPayment := payment - interestForWeek
-
-		player.Loans[l].makeLoanPayment(principalPayment)
-
-		printfln("Loan #%v: Payment: $%0.2f\nPrincipal: $%0.2f, Interest: $%0.2f", l+1, payment, player.Loans[l].Principal, interestForWeek)
-
-		if player.Loans[l].Principal <= 0.01 {
-			player.Loans[l].Principal = 0
-			player.Loans[l].Complete = true
-			printfln("Loan #%v is paid off.", l+1)
-		}
-	}
-}
-
-func (loan loanData) calcLoanPayment() float64 {
-	weeklyInterestRate := loan.APR / 100 / 52
-	if weeklyInterestRate == 0 {
-		return roundToCent(loan.Starting / float64(loan.TermWeeks))
-	}
-
-	numerator := weeklyInterestRate * loan.Starting
-	denominator := 1 - (1 / math.Pow(1+weeklyInterestRate, float64(loan.TermWeeks)))
-	weeklyPayment := numerator / denominator
-
-	weeklyPayment = math.Min(weeklyPayment, loan.Principal)
-	return roundToCent(weeklyPayment)
-}
-
-func (loan loanData) calcTotalInterest() float64 {
-	weeklyInterestRate := loan.APR / 100 / 52
-	if weeklyInterestRate == 0 {
-		return 0
-	}
-
-	numerator := weeklyInterestRate * loan.Starting
-	denominator := 1 - (1 / math.Pow(1+weeklyInterestRate, float64(loan.TermWeeks)))
-	weeklyPayment := numerator / denominator
-
-	totalInterest := 0.0
-	remainingPrincipal := loan.Starting
-
-	// Loop through the weeks and accumulate total interest paid
-	for week := 1; week <= loan.TermWeeks; week++ {
-		weeklyInterest := remainingPrincipal * weeklyInterestRate
-		totalInterest += weeklyInterest
-		principalPayment := weeklyPayment - weeklyInterest
-		remainingPrincipal -= principalPayment
-	}
-
-	return roundToCent(totalInterest)
-}
-
-func (player *playerData) processLoans() int {
-
-	player.loanCharges()
-
-	total := 0
-	for l := range player.Loans {
-		if player.Loans[l].Complete {
-			continue
-		}
-		total++
-	}
-
-	return total
-}
-
-func (game *gameData) tickAPR() {
-	game.LastAPR = game.APR
-	changePercent := 2 * game.getSettingFloat(SET_SIGAPR) * rand.Float64()
-	change := 1 + (changePercent / 100)
-
-	if rand.Float64() <= game.getSettingFloat(SET_APR_TREND) {
-		game.TrendAPR = !game.TrendAPR
-	}
-	if game.TrendAPR {
-		game.APR = (game.APR * change)
-	} else {
-		game.APR = (game.APR * (1 / change))
-	}
-
-	game.APR = math.Max(game.APR, game.getSettingFloat(SET_MINAPR))
-	game.APR = math.Min(game.APR, game.getSettingFloat(SET_MAXAPR))
-	game.APR = roundToCent(game.APR)
-
-	if game.LastAPR > game.APR {
-		printfln("APR %v%0.2f%% to %0.2f%%", trendSymbol[2], game.LastAPR-game.APR, game.APR)
-	} else if game.APR > game.LastAPR {
-		printfln("APR %v%0.2f%% to %0.2f%%", trendSymbol[1], game.APR-game.LastAPR, game.APR)
-	}
-
-	game.APRHistory = append(game.APRHistory, game.APR)
-}
-
-func (player *playerData) getLoanCount() int {
-	count := 0
-	for _, loan := range player.Loans {
-		if loan.Complete {
-			continue
-		}
-		count++
-	}
-
-	return count
-}
-
-func (loan *loanData) makeLoanPayment(amount float64) {
-	loan.Principal -= amount
-	loan.PaymentHistory = append(loan.PaymentHistory, amount)
-	if loan.Principal <= 0 {
-		loan.Principal = 0
-		loan.Complete = true
-	}
-}
-
 func (player *playerData) credit(income float64) {
 	player.Balance = roundToCent(player.Balance + income)
 }
@@ -278,5 +135,5 @@ func (player *playerData) debit(charge float64) bool {
 }
 
 func (loan loanData) printLoan(num int) {
-	printfln("Loan #%v: Loan Amount: $%0.2f\nPrincipal: $%0.2f, APR: %0.2f%%", num, loan.Starting, loan.Principal, loan.APR)
+	printfLn("Loan #%v: Loan Amount: $%0.2f\nPrincipal: $%0.2f, APR: %0.2f%%", num, loan.Starting, loan.Principal, loan.APR)
 }

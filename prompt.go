@@ -8,40 +8,21 @@ package main
 import (
 	"strconv"
 	"strings"
-	"time"
 )
 
-func readLine() string {
-
-	for {
-		time.Sleep(time.Millisecond * 10)
-
-		inputLock.Lock()
-		if !sDirty {
-			inputLock.Unlock()
-			continue
-		}
-
-		output := sLine
-		sDirty = false
-		inputLock.Unlock()
-		return output
-	}
-}
-
 func promptForString(defaultAnswer string, min, max int, confirm bool, format string, args ...interface{}) string {
-	printfln(format+" ", args...)
+	printfLn(format+" ", args...)
 
-	line := readLine()
+	line := <-newInput
 	if line == "" {
 		line = defaultAnswer
 	}
 	lLen := len(line)
 	if lLen < min {
-		printfln("At least %v characters.", min)
+		printfLn("At least %v characters.", min)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	} else if lLen > max {
-		printfln("Only %v characters max.", max)
+		printfLn("Only %v characters max.", max)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	}
 
@@ -75,7 +56,7 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	} else if strings.EqualFold(result, "y") || strings.EqualFold(result, "yes") {
 		return true
 	} else {
-		println("Yes or no y/n?")
+		printLn("Yes or no y/n?")
 		return promptForBool(defaultYes, format, args...)
 	}
 }
@@ -83,22 +64,22 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) int {
 
 	if useDefault {
-		printfln("%v %v-%v [%v] ", prompt, min, max, defaultVal)
+		printfLn("%v %v-%v [%v] ", prompt, min, max, defaultVal)
 	} else {
-		printfln("%v %v-%v ", prompt, min, max)
+		printfLn("%v %v-%v ", prompt, min, max)
 	}
 
-	line := readLine()
+	line := <-newInput
 	if useDefault && line == "" {
 		return defaultVal
 	}
 	value, err := strconv.ParseInt(line, 10, 64)
 	if err != nil {
-		println("Must be a number.")
+		printLn("Must be a number.")
 		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 	if int(value) < min || int(value) > max {
-		printfln("Must be %v to %v.", min, max)
+		printfLn("Must be %v to %v.", min, max)
 		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 
@@ -107,9 +88,9 @@ func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) 
 
 func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 
-	printfln("%v $%0.2f-%0.2f: $%0.2f ", prompt, min, max, defaultVal)
+	printfLn("%v $%0.2f-%0.2f: $%0.2f ", prompt, min, max, defaultVal)
 
-	line := readLine()
+	line := <-newInput
 	if line == "" {
 		return defaultVal
 	}
@@ -117,7 +98,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 	line = NumOnly(line)
 	value, err := strconv.ParseFloat(line, 64)
 	if err != nil {
-		println("That isn't a number.")
+		printLn("That isn't a number.")
 		return promptForMoney(prompt, defaultVal, min, max)
 	}
 	value = roundToCent(value)
@@ -125,7 +106,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 	max = roundToCent(max)
 
 	if value < min || value > max {
-		printfln("Must be $%0.2f-%0.2f.", min, max)
+		printfLn("Must be $%0.2f-%0.2f.", min, max)
 		return promptForMoney(prompt, defaultVal, min, max)
 	}
 
@@ -133,11 +114,11 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 }
 
 func promptForChoice(game *gameData, player *playerData, options []choiceData) int {
-	println("")
+	printLn("")
 
 	player.lastMenu = options
 	for i, item := range options {
-		printfln("%v) %v", i+1, item.Name)
+		printfLn("%v) %v", i+1, item.Name)
 	}
 
 	num := promptForInteger(true, 1, 1, len(options), "Choice")
@@ -153,7 +134,7 @@ func promptForChoice(game *gameData, player *playerData, options []choiceData) i
 		}
 		return num
 	} else {
-		println("That isn't a valid choice!")
+		printLn("That isn't a valid choice!")
 		promptForChoice(game, player, options)
 	}
 
