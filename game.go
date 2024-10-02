@@ -6,18 +6,19 @@
 package main
 
 import (
+	"strings"
 	"time"
 )
 
 func (game *gameData) playGame() {
 
 	countDown := 3
-	for x := 0; x < countDown; x++ {
+	for x := 01; x <= countDown; x++ {
 		CallClear()
 		printLn("Byte-99/4U")
 		//		println("Copyright 2024 Carl Otto III")
 		//		println("All rights reserved.")
-		printfLn("\nLoading %v...", countDown-x)
+		printfLn("\nLoading%v", strings.Repeat(".", x))
 		time.Sleep(time.Second)
 	}
 	CallClear()

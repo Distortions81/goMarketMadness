@@ -22,9 +22,9 @@ const (
 )
 
 var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
-	"",
-	"^",
-	"v",
+	"=",
+	"+",
+	"-",
 }
 
 func handleExit() {
