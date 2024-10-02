@@ -12,6 +12,7 @@ import (
 
 func (game *gameData) playGame() {
 
+	println("Market Madness!")
 	game.setup()
 
 	//Game loop

@@ -1,11 +1,12 @@
 package main
 
 import (
+	"image"
+	"image/color"
 	"log"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -15,8 +16,11 @@ const (
 
 	screenLines = 24
 	screenScale = 2
+)
 
-	GameTPS = 8
+var (
+	colorBG = color.NRGBA{R: 0, G: 255, B: 255, A: 255}
+	colorFG = color.NRGBA{R: 0, G: 0, B: 0, A: 255}
 )
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
@@ -63,6 +67,8 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	screen.Fill(colorBG)
+
 	outputLock.Lock()
 	defer outputLock.Unlock()
 
@@ -77,7 +83,38 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	showLines := lines[startLine:]
 	buf := strings.Join(showLines, "\n")
 
-	ebitenutil.DebugPrint(screen, buf+sInBuf)
+	//ebitenutil.DebugPrint(screen, buf+sInBuf)
+	drawText(screen, buf, 0, 0)
+}
+
+const (
+	fontSizeX, fontSizeY = 16, 16
+)
+
+func drawText(screen *ebiten.Image, buf string, x, y int) {
+
+	var row, col int
+	for _, char := range buf {
+		col++
+
+		if char == '\n' {
+			row++
+			col = 0
+		}
+		start := int(char - 32)
+		cx, cy := (start%32)*fontSizeX, (start/32)*fontSizeY
+
+		// Define the rectangle for the sub-region
+		rect := image.Rect(cx, cy, cx+fontSizeX, cy+fontSizeY)
+
+		// Use SubImage and type assert the result to *ebiten.Image
+		subImage := fontImg.SubImage(rect).(*ebiten.Image)
+
+		op := &ebiten.DrawImageOptions{}
+		op.Filter = ebiten.FilterNearest
+		op.GeoM.Translate(float64(x)+float64(col*fontSizeX)-fontSizeX, float64(y)+float64(row*fontSizeY))
+		screen.DrawImage(subImage, op)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -87,7 +124,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func startEbiten() {
 	g := &Game{}
 
-	ebiten.SetTPS(ebiten.SyncWithFPS)
+	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowSize(screenWidth*screenScale, screenHeight*screenScale)
 	ebiten.SetWindowTitle("Market Madness")
 	if err := ebiten.RunGame(g); err != nil {
