@@ -11,15 +11,27 @@ import (
 )
 
 const (
-	screenWidth  = 256 * 2
-	screenHeight = 192 * 2
+	fontScale             = 2
+	fontSizeX, fontSizeY  = 16, 16
+	termWidth, termHeight = 32, 24
 
-	screenLines = 24
+	xMarginPercent = 40
+	yMarginPercent = 40
+
+	baseX = (fontSizeX / fontScale) * termWidth
+	baseY = (fontSizeY / fontScale) * (termHeight - 1)
+
+	xMargin = (baseX / xMarginPercent)
+	yMargin = (baseY / yMarginPercent)
+
+	screenWidth  = (baseX + xMargin) * fontScale
+	screenHeight = (baseY + yMargin) * fontScale
+
 	screenScale = 2
 )
 
 var (
-	colorBG = color.NRGBA{R: 0, G: 255, B: 255, A: 255}
+	colorBG = color.NRGBA{R: 65, G: 232, B: 240, A: 255}
 	colorFG = color.NRGBA{R: 0, G: 0, B: 0, A: 255}
 )
 
@@ -75,7 +87,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	inbuf := strings.Join(sOut, "")
 	lines := strings.Split(inbuf, "\n")
 
-	sLine := len(lines) - screenLines
+	sLine := len(lines) - termHeight
 	if sLine < 0 {
 		sLine = 0
 	}
@@ -84,12 +96,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	buf := strings.Join(showLines, "\n")
 
 	//ebitenutil.DebugPrint(screen, buf+sInBuf)
-	drawText(screen, buf, 0, 0)
+	drawText(screen, buf, xMargin/2, yMargin/2)
 }
-
-const (
-	fontSizeX, fontSizeY = 16, 16
-)
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
 
@@ -100,7 +108,14 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 		if char == '\n' {
 			row++
 			col = 0
+		} else if char > '~' || char < ' ' {
+			char = '?'
 		}
+
+		if col > termWidth {
+			continue
+		}
+
 		start := int(char - 32)
 		cx, cy := (start%32)*fontSizeX, (start/32)*fontSizeY
 
