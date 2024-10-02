@@ -69,17 +69,17 @@ func takeLoan(data cData) bool {
 
 	maxLoan := data.player.calcMaxLoan(data.game)
 	if maxLoan < 1.00 || numLoans > data.game.getSettingInt(SET_MAXLOANNUM) {
-		println("Sorry, you have too many loans, the bank refuses.")
+		println("Sorry, you have too many loans!")
 		return false
 	}
 
 	maxLoan = roundToDollar(maxLoan)
-	printfln("Maximum loan the bank will offer $%0.2f", maxLoan)
-	loanAmount := promptForMoney("How much do you want to borrow?", maxLoan, 1.00, maxLoan)
+	printfln("Maximum loan $%0.2f", maxLoan)
+	loanAmount := promptForMoney("Borrow how much?", maxLoan, 1.00, maxLoan)
 
 	remainingWeeks := data.game.NumWeeks - data.game.Week - 1
 	if remainingWeeks <= 1 {
-		println("There isn't enough time left in the game for a loan!")
+		println("Not enough time left!")
 		return false
 	}
 	prompt := fmt.Sprintf("Loan term in weeks: 1-%v", remainingWeeks)
@@ -89,7 +89,7 @@ func takeLoan(data cData) bool {
 	totalInterest := newLoan.calcTotalInterest()
 	payments := newLoan.calcLoanPayment()
 
-	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks. Weekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
+	if promptForBool(false, "Loan terms: Total interest: $%0.2f over %v weeks.\nWeekly payments: $%0.2f\nAccept", totalInterest, loanTerm, payments) {
 		data.player.Loans = append(data.player.Loans, newLoan)
 		data.player.credit(loanAmount)
 	}
@@ -151,12 +151,12 @@ func (player *playerData) loanCharges() {
 
 		player.Loans[l].makeLoanPayment(principalPayment)
 
-		printfln("Loan #%v: Payment: $%0.2f, Principal: $%0.2f, Interest Charged: $%0.2f", l+1, payment, player.Loans[l].Principal, interestForWeek)
+		printfln("Loan #%v: Payment: $%0.2f\nPrincipal: $%0.2f, Interest: $%0.2f", l+1, payment, player.Loans[l].Principal, interestForWeek)
 
 		if player.Loans[l].Principal <= 0.01 {
 			player.Loans[l].Principal = 0
 			player.Loans[l].Complete = true
-			printfln("Loan #%v is now paid off.", l+1)
+			printfln("Loan #%v is paid off.", l+1)
 		}
 	}
 }
@@ -278,5 +278,5 @@ func (player *playerData) debit(charge float64) bool {
 }
 
 func (loan loanData) printLoan(num int) {
-	printfln("Loan #%v: Loan Amount: $%0.2f, Principal: $%0.2f, APR: %0.2f%%", num, loan.Starting, loan.Principal, loan.APR)
+	printfln("Loan #%v: Loan Amount: $%0.2f\nPrincipal: $%0.2f, APR: %0.2f%%", num, loan.Starting, loan.Principal, loan.APR)
 }

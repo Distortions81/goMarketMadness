@@ -51,7 +51,7 @@ func (game *gameData) playGame() {
 		if game.Week == game.NumWeeks {
 			println("\n** LAST WEEK!!! ***")
 		} else {
-			printfln("\n*** WEEK %v of %v has begun! ***", game.Week, game.NumWeeks)
+			printfln("\n*** WEEK %v of %v ***", game.Week, game.NumWeeks)
 		}
 		game.tickStocks()
 		game.tickAPR()
@@ -76,7 +76,7 @@ func (game *gameData) setup() {
 			if item.Hide {
 				continue
 			}
-			input := promptForString(game.getSettingString(item.ID), 0, 64, false, "%v: (%v):", item.Name, item.DefSetting)
+			input := promptForString(game.getSettingString(item.ID), 0, 64, false, "%v: [%v] ", item.Name, item.DefSetting)
 			game.putSettingString(item.ID, input)
 		}
 	} else {

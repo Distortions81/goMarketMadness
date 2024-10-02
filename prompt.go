@@ -38,15 +38,15 @@ func promptForString(defaultAnswer string, min, max int, confirm bool, format st
 	}
 	lLen := len(line)
 	if lLen < min {
-		printfln("You must supply at least %v characters.", min)
+		printfln("At least %v characters.", min)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	} else if lLen > max {
-		printfln("That is too long, must be less than %v characters.", max)
+		printfln("Only %v characters max.", max)
 		return promptForString(defaultAnswer, min, max, confirm, format, args...)
 	}
 
 	if confirm {
-		if promptForBool(true, "Confirm: (%v)", line) {
+		if promptForBool(true, "Confirm: [%v]", line) {
 			if line == "" {
 				return defaultAnswer
 			}
@@ -62,9 +62,9 @@ func promptForString(defaultAnswer string, min, max int, confirm bool, format st
 func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	question := ""
 	if defaultYes {
-		question = " (Y/n):"
+		question = " [Y/n] "
 	} else {
-		question = " (y/N):"
+		question = " [y/N] "
 	}
 	result := promptForString("", 0, 3, false, format+question, args...)
 
@@ -75,7 +75,7 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 	} else if strings.EqualFold(result, "y") || strings.EqualFold(result, "yes") {
 		return true
 	} else {
-		println("That isn't a valid answer. y or yes, n or no.")
+		println("Yes or no y/n?")
 		return promptForBool(defaultYes, format, args...)
 	}
 }
@@ -83,9 +83,9 @@ func promptForBool(defaultYes bool, format string, args ...interface{}) bool {
 func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) int {
 
 	if useDefault {
-		printfln("%v (%v-%v): (%v) ", prompt, min, max, defaultVal)
+		printfln("%v %v-%v [%v] ", prompt, min, max, defaultVal)
 	} else {
-		printfln("%v (%v-%v): ", prompt, min, max)
+		printfln("%v %v-%v ", prompt, min, max)
 	}
 
 	line := readLine()
@@ -94,11 +94,11 @@ func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) 
 	}
 	value, err := strconv.ParseInt(line, 10, 64)
 	if err != nil {
-		println("That isn't a number.")
+		println("Must be a number.")
 		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 	if int(value) < min || int(value) > max {
-		printfln("Must be a value between %v and %v.", min, max)
+		printfln("Must be %v to %v.", min, max)
 		return promptForInteger(useDefault, defaultVal, min, max, prompt)
 	}
 
@@ -107,7 +107,7 @@ func promptForInteger(useDefault bool, defaultVal, min, max int, prompt string) 
 
 func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 
-	printfln("%v ($%0.2f-$%0.2f): ($%0.2f) ", prompt, min, max, defaultVal)
+	printfln("%v $%0.2f-%0.2f: $%0.2f ", prompt, min, max, defaultVal)
 
 	line := readLine()
 	if line == "" {
@@ -125,7 +125,7 @@ func promptForMoney(prompt string, defaultVal, min, max float64) float64 {
 	max = roundToCent(max)
 
 	if value < min || value > max {
-		printfln("Must be a value between $%0.2f and $%0.2f.", min, max)
+		printfln("Must be $%0.2f-%0.2f.", min, max)
 		return promptForMoney(prompt, defaultVal, min, max)
 	}
 

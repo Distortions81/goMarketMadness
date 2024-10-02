@@ -24,9 +24,9 @@ const (
 )
 
 var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
-	"→",
-	"↑",
-	"↓",
+	"",
+	"^",
+	"v",
 }
 
 func setupTerm() {
@@ -41,14 +41,8 @@ func handleExit() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		fixTerm()
 		os.Exit(1)
 	}()
-}
-
-func fixTerm() {
-	exec.Command("stty", "-F", "/dev/tty", "sane").Run()
-	println("Game will now close.")
 }
 
 func (stock stockData) showChange() string {

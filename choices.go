@@ -86,7 +86,7 @@ func leaderboard(data cData) bool {
 
 	println("\nLeaderboard:")
 	for v, victim := range leaderBoard {
-		printfln("#%v -- %v: Stocks: %v, Bank: %v, Debts: %v, Net: %v",
+		printfln("#%v -- %v: Stocks: %v,\nBank: %v, Debts: %v, Net: %v",
 			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
 	}
 
@@ -97,7 +97,7 @@ func leaderboard(data cData) bool {
 }
 
 func leaveTable(data cData) bool {
-	printfln("Player #%v: (%v) has left the game.", data.player.Number, data.player.Name)
+	printfln("Player #%v: %v\nLeft the game.", data.player.Number, data.player.Name)
 	data.player.Gone = true
 	return true
 }
@@ -108,7 +108,7 @@ func endTurn(data cData) bool {
 }
 
 func buyShares(data cData) bool {
-	printfln("\nBuy shares of which stock?")
+	printfln("\nBuy which stock?")
 
 	//Print stock list
 	maxLen := 0
@@ -116,7 +116,7 @@ func buyShares(data cData) bool {
 		maxLen = maxInt(maxLen, len(stock.Name))
 	}
 	for s, stock := range data.game.Stocks {
-		printfln("%v) %*v -- $%0.2f", s+1, maxLen, stock.Name, stock.Price)
+		printfln("%v) %*v $%0.2f", s+1, maxLen, stock.Name, stock.Price)
 	}
 
 	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Buy which stock?")
@@ -124,7 +124,7 @@ func buyShares(data cData) bool {
 	maxAfford := math.Floor(data.player.Balance / data.game.Stocks[choice].Price)
 	maxAfford = floorToCent(maxAfford)
 	if maxAfford < 1 {
-		printfln("You can't afford to buy any shares.")
+		printfln("You can't afford any.")
 		return false
 	}
 
@@ -134,7 +134,7 @@ func buyShares(data cData) bool {
 	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")
 	dollarValue := roundToCent(data.game.Stocks[choice].Price * float64(numShares))
 	checkBalance(data)
-	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
+	if promptForBool(false, "Buy %v shares of\n%v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
 		data.player.debit(dollarValue)
 		printfln("Debit: $%0.2f, New balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.creditStock(data.game, choice, numShares)
@@ -143,7 +143,7 @@ func buyShares(data cData) bool {
 }
 
 func sellShares(data cData) bool {
-	printfln("\nSell shares of which stock?")
+	printfln("\nSell which stock?")
 
 	//Print stock list
 	maxLen := 0
@@ -158,7 +158,7 @@ func sellShares(data cData) bool {
 			continue
 		}
 		dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
-		printfln("%v) %*v -- (%v shares) $%0.2f", s+1,
+		printfln("%v) %*v %v shares $%0.2f", s+1,
 			maxLen, stock.Name, stock.Shares, dollarValue)
 	}
 
@@ -170,7 +170,7 @@ func sellShares(data cData) bool {
 	dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(numShares))
 	if promptForBool(false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
 		data.player.credit(dollarValue)
-		printfln("Credit: $%0.2f, New balance: $%0.2f", dollarValue, data.player.Balance)
+		printfln("Credit: $%0.2f\nNew balance: $%0.2f", dollarValue, data.player.Balance)
 		data.player.debitStock(stock.StockID, numShares)
 	}
 	return false
@@ -184,13 +184,13 @@ func displayShares(data cData) bool {
 		if stock.Shares <= 0 {
 			continue
 		}
-		printfln("Stock %v, %v shares. Current value: $%0.2f",
+		printfln("Stock %v, %v shares.\nCurrent value: $%0.2f",
 			stock.Name, stock.Shares, float64(stock.Shares)*data.game.Stocks[stock.StockID].Price)
 		count++
 	}
 
 	if count == 0 {
-		println("You don't have any stock shares at the moment.")
+		println("You have no stocks.")
 	}
 	return false
 }
