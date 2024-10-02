@@ -15,7 +15,7 @@ var gReady bool
 
 func (game *gameData) playGame() {
 
-	countDown := 5
+	countDown := 3
 	for x := 0; x < countDown; x++ {
 		CallClear()
 		println("Byte-99/4U")
@@ -26,9 +26,11 @@ func (game *gameData) playGame() {
 	}
 	CallClear()
 	time.Sleep(time.Millisecond * 500)
-	colorBG = tiColor[C_LGREEN]
-	time.Sleep(time.Millisecond * 500)
 	println("Market Madness!")
+	for x := 1; x < 8; x++ {
+		CallBGColor(x)
+		time.Sleep(time.Millisecond * 200)
+	}
 	game.setup()
 
 	//Game loop
@@ -40,7 +42,7 @@ func (game *gameData) playGame() {
 				continue
 			}
 			game.showStockPrices()
-			printfln("\nPlayer #%v: (%v), it is your turn!", p+1, player.Name)
+			printfln("\nPlayer #%v: %v\nIt is your turn!", p+1, player.Name)
 			game.Players[p].processLoans()
 			printfln("Bank balance: $%0.2f", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)

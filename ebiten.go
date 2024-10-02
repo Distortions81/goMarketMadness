@@ -115,7 +115,8 @@ func drawText(screen *ebiten.Image, buf string, x, y int) {
 		}
 
 		if col > termWidth {
-			continue
+			row++
+			col = 1
 		}
 
 		start := int(char - 32)
