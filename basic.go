@@ -14,3 +14,14 @@ func CallBGColor(i int) {
 
 	colorBG = tiColor[i]
 }
+
+func EnterKey(game *gameData, input string) {
+	if input == "" {
+		input = "Press enter to continue."
+	}
+	printfLn(input)
+
+	game.showCursor = true
+	defer func() { game.showCursor = false }()
+	<-newInput
+}

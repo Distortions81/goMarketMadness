@@ -32,7 +32,7 @@ func (game *gameData) setup() {
 		game.promptNumPlayers()
 		game.createPlayerList(game.NumPlayers)
 	} else {
-		if !promptForBool(game, false, "Play again with same %v players?", numPlayers) {
+		if !promptForBool(game, false, "Play with same %v players?", numPlayers) {
 			game.promptNumPlayers()
 			game.Players = make([]*playerData, numPlayers)
 		}

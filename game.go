@@ -54,7 +54,6 @@ func (game *gameData) playGame() {
 	}
 
 	game.showGameStats()
-
 	game.playGame()
 }
 
@@ -80,4 +79,5 @@ func (game *gameData) showGameStats() {
 
 	game.Week++
 	leaderboard(cData{game: game, player: nil})
+	EnterKey(game, "")
 }
