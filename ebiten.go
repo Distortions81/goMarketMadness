@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
 	"log"
 	"strings"
 
@@ -30,8 +29,8 @@ var (
 	screenWidth  = int(baseX+xMargin) * fontScale
 	screenHeight = int(baseY+yMargin) * fontScale
 
-	colorBG = color.NRGBA{R: 65, G: 232, B: 240, A: 255}
-	colorFG = color.NRGBA{R: 0, G: 0, B: 0, A: 255}
+	colorBG = tiColor[7]
+	colorFG = tiColor[1]
 
 	xoff, yoff = 0, 0
 )
