@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"log"
 	"strings"
@@ -140,8 +139,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func startEbiten() {
 	g := &Game{}
 
-	fmt.Printf("%v, %v\n", screenWidth/fontScale, screenHeight/fontScale)
-
+	//fmt.Printf("%v, %v\n", screenWidth/fontScale, screenHeight/fontScale)
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowSize(screenWidth*screenScale, screenHeight*screenScale)
 	ebiten.SetWindowTitle("Market Madness")
