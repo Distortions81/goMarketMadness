@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"log"
 	"strings"
@@ -30,7 +31,21 @@ type ebitenGame struct {
 	game *gameData
 }
 
+var scroll float64
+
+func getScroll() int {
+	return int(scroll)
+}
+
 func (g *ebitenGame) Update() error {
+	_, sV := ebiten.Wheel()
+	if scroll+sV > 0 {
+		scroll += sV
+	} else {
+		scroll = 0
+	}
+	fmt.Printf("%v\n", getScroll())
+
 	if !g.game.showCursor {
 		return nil
 	}
@@ -60,22 +75,21 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	inbuf := strings.Join(consoleOut, "")
 	lines := strings.Split(inbuf, "\n")
 
-	sLine := len(lines) - termHeight
+	numLines := len(lines)
+	sLine := numLines - termHeight - getScroll()
 	if sLine < 0 {
 		sLine = 0
 	}
 	startLine := max(0, sLine)
-	showLines := lines[startLine:]
+	showLines := lines[startLine:numLines]
 	buf := strings.Join(showLines, "\n")
 
 	if buf != "" && g.game.showCursor {
-		blen := len(buf) - 1
-
 		cur := " "
 		if time.Now().UnixMilli()/500%2 == 0 {
 			cur = string(rune(cursorChar))
 		}
-		drawText(screen, buf[:blen]+" "+consoleIn+cur, xMargin/2, yMargin/2)
+		drawText(screen, buf+" "+consoleIn+cur, xMargin/2, yMargin/2)
 	} else {
 		drawText(screen, buf, xMargin/2, yMargin/2)
 	}

@@ -7,7 +7,6 @@ package main
 
 import (
 	"strings"
-	"time"
 )
 
 func (game *gameData) playGame() {
@@ -19,14 +18,14 @@ func (game *gameData) playGame() {
 		//		println("Copyright 2024 Carl Otto III")
 		//		println("All rights reserved.")
 		printfLn("\nLoading%v", strings.Repeat(".", x))
-		time.Sleep(time.Second)
+		//time.Sleep(time.Second)
 	}
 	CallClear()
-	time.Sleep(time.Millisecond * 500)
+	//time.Sleep(time.Millisecond * 500)
 	printLn("Market Madness!")
 	for x := 1; x < 8; x++ {
 		CallBGColor(x)
-		time.Sleep(time.Millisecond * 200)
+		//time.Sleep(time.Millisecond * 200)
 	}
 	game.setup()
 

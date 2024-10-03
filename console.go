@@ -47,6 +47,7 @@ func printf(format string, args ...interface{}) {
 	end := len(consoleOut)
 
 	consoleOut = consoleOut[max(0, end-scrollBack):end]
+	scroll = 0
 }
 
 func printfLn(format string, args ...interface{}) {
@@ -58,6 +59,7 @@ func printfLn(format string, args ...interface{}) {
 	end := len(consoleOut)
 
 	consoleOut = consoleOut[max(0, end-scrollBack):end]
+	scroll = 0
 }
 
 func printLn(output string) {
@@ -68,6 +70,7 @@ func printLn(output string) {
 	end := len(consoleOut)
 
 	consoleOut = consoleOut[max(0, end-scrollBack):end]
+	scroll = 0
 }
 
 func unprintln() {
