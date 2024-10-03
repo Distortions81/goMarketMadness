@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"log"
 	"strings"
@@ -15,7 +14,7 @@ import (
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30
-		interval = 15
+		interval = 10
 	)
 	d := inpututil.KeyPressDuration(key)
 	if d == 1 {
@@ -31,20 +30,27 @@ type ebitenGame struct {
 	game *gameData
 }
 
-var scroll float64
+var scroll int
 
-func getScroll() int {
-	return int(scroll)
-}
+const linesPerScroll = 4
 
 func (g *ebitenGame) Update() error {
-	_, sV := ebiten.Wheel()
+	var sV int
+	_, s := ebiten.Wheel()
+	sV += int(s * 4)
+
+	// If the enter key is pressed, add a line break.
+	if repeatingKeyPressed(ebiten.KeyPageUp) {
+		sV += linesPerScroll
+	} else if repeatingKeyPressed(ebiten.KeyPageDown) {
+		sV -= linesPerScroll
+	}
+
 	if scroll+sV > 0 {
 		scroll += sV
 	} else {
 		scroll = 0
 	}
-	fmt.Printf("%v\n", getScroll())
 
 	if !g.game.showCursor {
 		return nil
@@ -76,7 +82,7 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	lines := strings.Split(inbuf, "\n")
 
 	numLines := len(lines)
-	sLine := numLines - termHeight - getScroll()
+	sLine := numLines - termHeight - scroll
 	if sLine < 0 {
 		sLine = 0
 	}
