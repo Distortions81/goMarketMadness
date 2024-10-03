@@ -126,7 +126,6 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 		drawText(screen, buf, xMargin/2, yMargin/2)
 	}
 
-	//ebitenutil.DebugPrint(screen, time.Now().String())
 	setScreenDirty(false)
 }
 

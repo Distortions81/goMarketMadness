@@ -12,6 +12,7 @@ import (
 
 func (game *gameData) playGame(skip bool) {
 
+	CallClear()
 	if !skip {
 		countDown := 3
 		for x := 1; x <= countDown; x++ {
@@ -83,4 +84,5 @@ func (game *gameData) showGameStats() {
 	game.Week++
 	leaderboard(cData{game: game, player: nil})
 	EnterKey(game, "")
+	CallClear()
 }
