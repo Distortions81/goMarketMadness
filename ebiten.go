@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -123,7 +122,7 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 		drawText(screen, buf, xMargin/2, yMargin/2)
 	}
 
-	ebitenutil.DebugPrint(screen, time.Now().String())
+	//ebitenutil.DebugPrint(screen, time.Now().String())
 	setScreenDirty(false)
 }
 
@@ -190,13 +189,9 @@ func getScreenDirty() bool {
 
 func blinkCursor(game *gameData) {
 	for {
-		time.Sleep(time.Millisecond * 500)
+		time.Sleep(time.Millisecond * 333)
 		if game.showCursor {
-			if cursorState {
-				cursorState = false
-			} else {
-				cursorState = true
-			}
+			cursorState = !cursorState
 			setScreenDirty(true)
 		}
 	}
