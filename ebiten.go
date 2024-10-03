@@ -69,8 +69,8 @@ func (g *ebitenGame) Update() error {
 
 	cInputRune = ebiten.AppendInputChars(cInputRune[:0])
 	if len(cInputRune) > 0 {
-		setScreenDirty(true)
 		consoleIn += string(cInputRune)
+		setScreenDirty(true)
 	}
 
 	// If the enter key is pressed, add a line break.
@@ -103,7 +103,11 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	lines := strings.Split(inbuf, "\n")
 
 	numLines := len(lines)
-	sLine := numLines - termHeight - scroll
+	fLine := numLines - termHeight
+	if scroll > fLine {
+		scroll = fLine
+	}
+	sLine := fLine - scroll
 	if sLine < 0 {
 		sLine = 0
 	}
