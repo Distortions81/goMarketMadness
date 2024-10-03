@@ -69,3 +69,14 @@ func printLn(output string) {
 
 	consoleOut = consoleOut[max(0, end-scrollBack):end]
 }
+
+func unprintln() {
+	consoleOutLock.Lock()
+	defer consoleOutLock.Unlock()
+
+	end := len(consoleOut)
+	if end <= 0 {
+		return
+	}
+	consoleOut = consoleOut[max(0, (end-1)-scrollBack) : end-1]
+}

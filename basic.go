@@ -24,4 +24,5 @@ func EnterKey(game *gameData, input string) {
 	game.showCursor = true
 	defer func() { game.showCursor = false }()
 	<-newInput
+	unprintln()
 }

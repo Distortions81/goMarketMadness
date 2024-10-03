@@ -46,6 +46,7 @@ func leaderboard(data cData) bool {
 	for v, victim := range leaderBoard {
 		printfLn("#%v %v\nStocks: %v, Bank: %v\n Debts: %v, Net: %v",
 			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
+		EnterKey(data.game, "")
 	}
 
 	if data.game.Week == data.game.NumWeeks+1 {

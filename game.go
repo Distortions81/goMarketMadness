@@ -31,7 +31,7 @@ func (game *gameData) playGame() {
 	game.setup()
 
 	//Game loop
-	for week := range game.NumWeeks {
+	for week := range game.NumWeeks + 1 {
 		game.Week = week + 1
 
 		for p, player := range game.Players {
@@ -47,7 +47,7 @@ func (game *gameData) playGame() {
 
 		if game.Week == game.NumWeeks {
 			printLn("** LAST WEEK!!! ***")
-		} else {
+		} else if game.Week < game.NumWeeks {
 			printfLn("*** WEEK %v of %v ***", game.Week, game.NumWeeks)
 		}
 		game.tickStocks()
