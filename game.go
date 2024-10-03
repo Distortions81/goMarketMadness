@@ -7,25 +7,28 @@ package main
 
 import (
 	"strings"
+	"time"
 )
 
-func (game *gameData) playGame() {
+func (game *gameData) playGame(skip bool) {
 
-	countDown := 3
-	for x := 01; x <= countDown; x++ {
+	if !skip {
+		countDown := 3
+		for x := 1; x <= countDown; x++ {
+			CallClear()
+			printLn("Byte-99/4U")
+			println("Copyright 2024 Carl Otto III")
+			println("All rights reserved.")
+			printfLn("\nLoading%v", strings.Repeat(".", x))
+			time.Sleep(time.Second)
+		}
 		CallClear()
-		printLn("Byte-99/4U")
-		//		println("Copyright 2024 Carl Otto III")
-		//		println("All rights reserved.")
-		printfLn("\nLoading%v", strings.Repeat(".", x))
-		//time.Sleep(time.Second)
-	}
-	CallClear()
-	//time.Sleep(time.Millisecond * 500)
-	printLn("Market Madness!")
-	for x := 1; x < 8; x++ {
-		CallBGColor(x)
-		//time.Sleep(time.Millisecond * 200)
+		time.Sleep(time.Millisecond * 500)
+		printLn("Market Madness!")
+		for x := 1; x < 8; x++ {
+			CallBGColor(x)
+			time.Sleep(time.Millisecond * 200)
+		}
 	}
 	game.setup()
 
@@ -54,7 +57,7 @@ func (game *gameData) playGame() {
 	}
 
 	game.showGameStats()
-	game.playGame()
+	game.playGame(skip)
 }
 
 func (game *gameData) showGameStats() {

@@ -5,10 +5,15 @@
 
 package main
 
+import "flag"
+
 func main() {
 
+	skip := flag.Bool("skip", false, "skip startup animations")
+	flag.Parse()
+
 	newGame := &gameData{Settings: defSettings}
-	go newGame.playGame()
+	go newGame.playGame(*skip)
 
 	startEbiten(newGame)
 }
