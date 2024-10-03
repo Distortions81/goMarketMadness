@@ -38,6 +38,7 @@ var (
 )
 
 func printf(format string, args ...interface{}) {
+	setScreenDirty(true)
 
 	consoleOutLock.Lock()
 	defer consoleOutLock.Unlock()
@@ -51,6 +52,8 @@ func printf(format string, args ...interface{}) {
 }
 
 func printfLn(format string, args ...interface{}) {
+	setScreenDirty(true)
+
 	consoleOutLock.Lock()
 	defer consoleOutLock.Unlock()
 
@@ -63,6 +66,8 @@ func printfLn(format string, args ...interface{}) {
 }
 
 func printLn(output string) {
+	setScreenDirty(true)
+
 	consoleOutLock.Lock()
 	defer consoleOutLock.Unlock()
 
@@ -74,6 +79,8 @@ func printLn(output string) {
 }
 
 func unprintln() {
+	setScreenDirty(true)
+
 	consoleOutLock.Lock()
 	defer consoleOutLock.Unlock()
 

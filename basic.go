@@ -4,6 +4,7 @@ func CallClear() {
 	consoleOutLock.Lock()
 	defer consoleOutLock.Unlock()
 
+	setScreenDirty(true)
 	consoleOut = []string{}
 }
 
@@ -11,7 +12,7 @@ func CallBGColor(i int) {
 	if i < 0 || i > 15 {
 		return
 	}
-
+	setScreenDirty(true)
 	colorBG = tiColor[i]
 }
 

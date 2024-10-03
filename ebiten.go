@@ -4,11 +4,23 @@ import (
 	"image"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
+
+var (
+	scroll          int
+	screenDirty     bool
+	screenDirtyLock sync.Mutex
+
+	cursorState bool
+)
+
+const linesPerScroll = 4
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
@@ -30,26 +42,26 @@ type ebitenGame struct {
 	game *gameData
 }
 
-var scroll int
-
-const linesPerScroll = 4
-
 func (g *ebitenGame) Update() error {
 	var sV int
 	_, s := ebiten.Wheel()
-	sV += int(s * 4)
+	if s != 0.0 {
+		setScreenDirty(true)
+		sV += int(s * 4)
+		if scroll+sV > 0 {
+			scroll += sV
+		} else {
+			scroll = 0
+		}
+	}
 
 	// If the enter key is pressed, add a line break.
 	if repeatingKeyPressed(ebiten.KeyPageUp) {
 		sV += linesPerScroll
+		setScreenDirty(true)
 	} else if repeatingKeyPressed(ebiten.KeyPageDown) {
 		sV -= linesPerScroll
-	}
-
-	if scroll+sV > 0 {
-		scroll += sV
-	} else {
-		scroll = 0
+		setScreenDirty(true)
 	}
 
 	if !g.game.showCursor {
@@ -57,18 +69,23 @@ func (g *ebitenGame) Update() error {
 	}
 
 	cInputRune = ebiten.AppendInputChars(cInputRune[:0])
-	consoleIn += string(cInputRune)
+	if len(cInputRune) > 0 {
+		setScreenDirty(true)
+		consoleIn += string(cInputRune)
+	}
 
 	// If the enter key is pressed, add a line break.
 	if repeatingKeyPressed(ebiten.KeyEnter) || repeatingKeyPressed(ebiten.KeyNumpadEnter) {
 		newInput <- consoleIn
 		consoleIn = ""
+		setScreenDirty(true)
 	}
 
 	// If the backspace key is pressed, remove one character.
 	if repeatingKeyPressed(ebiten.KeyBackspace) {
 		if len(consoleIn) >= 1 {
 			consoleIn = consoleIn[:len(consoleIn)-1]
+			setScreenDirty(true)
 		}
 	}
 
@@ -76,6 +93,11 @@ func (g *ebitenGame) Update() error {
 }
 
 func (g *ebitenGame) Draw(screen *ebiten.Image) {
+
+	if !getScreenDirty() {
+		return
+	}
+
 	screen.Fill(colorBG)
 
 	inbuf := strings.Join(consoleOut, "")
@@ -89,20 +111,23 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	startLine := max(0, sLine)
 	showLines := lines[startLine:numLines]
 	buf := strings.Join(showLines, "\n")
+	bLen := len(buf) - 1
 
 	if buf != "" && g.game.showCursor {
 		cur := " "
-		if time.Now().UnixMilli()/500%2 == 0 {
+		if cursorState {
 			cur = string(rune(cursorChar))
 		}
-		drawText(screen, buf+" "+consoleIn+cur, xMargin/2, yMargin/2)
+		drawText(screen, buf[:bLen]+" "+consoleIn+cur, xMargin/2, yMargin/2)
 	} else {
 		drawText(screen, buf, xMargin/2, yMargin/2)
 	}
+
+	ebitenutil.DebugPrint(screen, time.Now().String())
+	setScreenDirty(false)
 }
 
 func drawText(screen *ebiten.Image, buf string, x, y int) {
-
 	var row, col int
 	for _, char := range buf {
 		col++
@@ -140,8 +165,39 @@ func startEbiten(game *gameData) {
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowSize(screenWidth*screenMagnify, screenHeight*screenMagnify)
 	ebiten.SetWindowTitle("Market Madness")
+	ebiten.SetScreenClearedEveryFrame(false)
+
+	go blinkCursor(game)
+	setScreenDirty(true)
 	if err := ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
 
+}
+
+func setScreenDirty(set bool) {
+	screenDirtyLock.Lock()
+	screenDirty = set
+	screenDirtyLock.Unlock()
+}
+
+func getScreenDirty() bool {
+	screenDirtyLock.Lock()
+	defer screenDirtyLock.Unlock()
+
+	return screenDirty
+}
+
+func blinkCursor(game *gameData) {
+	for {
+		time.Sleep(time.Millisecond * 500)
+		if game.showCursor {
+			if cursorState {
+				cursorState = false
+			} else {
+				cursorState = true
+			}
+			setScreenDirty(true)
+		}
+	}
 }
