@@ -29,22 +29,22 @@ func (game *gameData) setup() {
 	//Prompt to create players
 	oldPlayers := game.Players
 	numPlayers := len(game.Players)
+
 	if game.Players == nil {
 		game.promptNumPlayers()
-		game.createPlayerList(game.NumPlayers)
 	} else {
 		if !promptForBool(game, false, "Play with same %v players?", numPlayers) {
 			game.promptNumPlayers()
 		}
-		game.createPlayerList(game.NumPlayers)
 	}
+	game.createPlayerList(game.NumPlayers)
 
 	//Create players
 	for p, player := range game.Players {
 		if player == nil {
 			game.Players[p] = &playerData{Number: p + 1}
 			//Transfer old player name, if exists
-			if oldPlayers[p] != nil {
+			if oldPlayers != nil && oldPlayers[p] != nil {
 				game.Players[p].Name = oldPlayers[p].Name
 			}
 		}
