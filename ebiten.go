@@ -9,6 +9,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 var (
@@ -124,6 +125,12 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 		drawText(screen, buf[:bLen]+" "+consoleIn+cur, xMargin/2, yMargin/2)
 	} else {
 		drawText(screen, buf, xMargin/2, yMargin/2)
+	}
+
+	if g.game.showSplash {
+		for i := 1; i < 17; i++ {
+			vector.DrawFilledRect(screen, (float32(i) * 16.0), float32(yMargin), 16, 24, barColors[i-1], false)
+		}
 	}
 
 	setScreenDirty(false)

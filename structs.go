@@ -15,6 +15,7 @@ type gameData struct {
 	TrendAPR                   bool
 	Week, NumWeeks, NumPlayers int
 
+	showSplash,
 	showCursor bool
 }
 

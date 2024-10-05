@@ -6,7 +6,6 @@
 package main
 
 import (
-	"strings"
 	"time"
 )
 
@@ -14,15 +13,12 @@ func (game *gameData) playGame(skip bool) {
 
 	CallClear()
 	if !skip {
-		countDown := 3
-		for x := 1; x <= countDown; x++ {
-			CallClear()
-			printLn("Byte-99/4U")
-			println("Copyright 2024 Carl Otto III")
-			println("All rights reserved.")
-			printfLn("\nLoading%v", strings.Repeat(".", x))
-			time.Sleep(time.Second)
-		}
+		CallClear()
+		printLn("Byte-99/4U")
+		game.showSplash = true
+		EnterKey(game, "")
+		game.showSplash = false
+
 		CallClear()
 		time.Sleep(time.Millisecond * 500)
 		printLn("Market Madness!")
