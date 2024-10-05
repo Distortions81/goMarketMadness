@@ -27,6 +27,7 @@ func (game *gameData) setup() {
 	}
 
 	//Prompt to create players
+	oldPlayers := game.Players
 	numPlayers := len(game.Players)
 	if game.Players == nil {
 		game.promptNumPlayers()
@@ -36,9 +37,7 @@ func (game *gameData) setup() {
 			game.promptNumPlayers()
 		}
 		game.createPlayerList(game.NumPlayers)
-
 	}
-	oldPlayers := game.Players
 
 	//Create players
 	for p, player := range game.Players {

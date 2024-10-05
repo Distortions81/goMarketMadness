@@ -11,7 +11,7 @@ import (
 const fontPath = "data/fonts/font.png"
 
 var (
-	//go:embed data
+	//go:embed data/fonts
 	f       embed.FS
 	fontImg *ebiten.Image
 )
