@@ -13,7 +13,8 @@ var (
 	termWidth, termHeight = 32, 24
 	scrollBack            = 10000
 
-	screenOverscan = 0.1640
+	//screenOverscan = 0.1640
+	screenOverscan = 0.0
 
 	baseX = (fontSizeX / fontScale) * termWidth
 	baseY = (fontSizeY + 1/fontScale) * (termHeight - 1)

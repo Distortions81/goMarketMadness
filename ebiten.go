@@ -100,6 +100,19 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 
 	screen.Fill(colorBG)
 
+	if g.game.showSplash {
+		for i := 0; i < 16; i++ {
+			vector.DrawFilledRect(screen, float32(xMargin/2)+(float32(i)*16.0), float32(yMargin/2), 16, 24, barColors[i], false)
+			vector.DrawFilledRect(screen, float32(xMargin/2)+(float32(i)*16.0), (float32(yMargin/2)+float32(baseX))-96, 16, 24, barColors[i], false)
+			drawText(screen, "BYTE-99/4U", (xMargin/2)+(baseX/2)-(4*fontSizeX), (yMargin/2)+(baseY/2)-(4*fontSizeY))
+			drawText(screen, "HOME COMPUTER", (xMargin/2)+(baseX/2)-(6*fontSizeX), (yMargin/2)+(baseY/2)-(2*fontSizeY))
+			drawText(screen, "PRESS ANY KEY TO BEGIN", (xMargin/2)+(baseX/2)-(11*fontSizeX), (yMargin/2)+(baseY/2)+(5*fontSizeY))
+			drawText(screen, "2024 CARL FRANK OTTO III", (xMargin/2)+(baseX/2)-(12*fontSizeX), (yMargin/2)+(baseY/2)+(11*fontSizeY))
+		}
+
+		return
+	}
+
 	inbuf := strings.Join(consoleOut, "")
 	lines := strings.Split(inbuf, "\n")
 
@@ -125,12 +138,6 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 		drawText(screen, buf[:bLen]+" "+consoleIn+cur, xMargin/2, yMargin/2)
 	} else {
 		drawText(screen, buf, xMargin/2, yMargin/2)
-	}
-
-	if g.game.showSplash {
-		for i := 1; i < 17; i++ {
-			vector.DrawFilledRect(screen, (float32(i) * 16.0), float32(yMargin), 16, 24, barColors[i-1], false)
-		}
 	}
 
 	setScreenDirty(false)
