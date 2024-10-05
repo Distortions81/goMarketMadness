@@ -107,7 +107,7 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 			drawText(screen, "BYTE-99/4U", (xMargin/2)+(baseX/2)-(4*fontSizeX), (yMargin/2)+(baseY/2)-(4*fontSizeY))
 			drawText(screen, "HOME COMPUTER", (xMargin/2)+(baseX/2)-(6*fontSizeX), (yMargin/2)+(baseY/2)-(2*fontSizeY))
 			drawText(screen, "PRESS ANY KEY TO BEGIN", (xMargin/2)+(baseX/2)-(11*fontSizeX), (yMargin/2)+(baseY/2)+(5*fontSizeY))
-			drawText(screen, "2024 CARL FRANK OTTO III", (xMargin/2)+(baseX/2)-(12*fontSizeX), (yMargin/2)+(baseY/2)+(11*fontSizeY))
+			drawText(screen, "(C)2024 CARL FRANK OTTO III", (xMargin/2)+(baseX/2)-(14*fontSizeX), (yMargin/2)+(baseY/2)+(11*fontSizeY))
 		}
 
 		return
