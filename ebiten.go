@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"log"
+	"math"
 	"strings"
 	"sync"
 	"time"
@@ -20,7 +21,7 @@ var (
 	cursorState bool
 )
 
-const linesPerScroll = 4
+const linesPerScroll = 1
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
@@ -42,16 +43,25 @@ type ebitenGame struct {
 	game *gameData
 }
 
+var lastScroll time.Time
+
 func (g *ebitenGame) Update() error {
 	var sV int
-	_, s := ebiten.Wheel()
-	if s != 0.0 {
-		setScreenDirty(true)
-		sV += int(s * 4)
-		if scroll+sV > 0 {
-			scroll += sV
-		} else {
-			scroll = 0
+	if time.Since(lastScroll) > time.Millisecond*50 {
+		lastScroll = time.Now()
+
+		_, s := ebiten.Wheel()
+		if s != 0.0 {
+			s = math.Max(s, -1.0)
+			s = math.Min(s, 1.0)
+
+			setScreenDirty(true)
+			sV += int(s * 4)
+			if scroll+sV > 0 {
+				scroll += sV
+			} else {
+				scroll = 0
+			}
 		}
 	}
 
