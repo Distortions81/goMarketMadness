@@ -36,7 +36,7 @@ func promptForString(game *gameData, defaultAnswer string, min, max int, confirm
 			}
 			return line
 		} else {
-			promptForString(game, defaultAnswer, min, max, confirm, format, args...)
+			return promptForString(game, defaultAnswer, min, max, confirm, format, args...)
 		}
 	}
 
