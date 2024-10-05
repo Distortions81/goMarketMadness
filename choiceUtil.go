@@ -34,7 +34,7 @@ func leaderboard(data cData) bool {
 		tmp.BankVal = player.Balance
 
 		netWorth := stockVal + player.Balance - debts
-		tmp.NetWorth = netWorth
+		tmp.NetWorth = roundToCent(netWorth)
 		leaderBoard = append(leaderBoard, tmp)
 	}
 
