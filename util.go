@@ -6,11 +6,9 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"os"
-	"os/exec"
 	"os/signal"
 	"regexp"
 	"syscall"
@@ -24,16 +22,9 @@ const (
 )
 
 var trendSymbol [TREND_MAX]string = [TREND_MAX]string{
-	"→",
-	"↑",
-	"↓",
-}
-
-func setupTerm() {
-	// disable input buffering
-	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
-	// do not display entered characters on the screen
-	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+	"=",
+	"+",
+	"-",
 }
 
 func handleExit() {
@@ -41,41 +32,14 @@ func handleExit() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		fixTerm()
 		os.Exit(1)
 	}()
 }
 
-func fixTerm() {
-	exec.Command("stty", "-F", "/dev/tty", "sane").Run()
-	fmt.Println("Game will now close.")
-}
+func (game *gameData) genLogRand(max float64) float64 {
+	u := rand.Float64()
 
-func (stock stockData) showChange() string {
-	buf := fmt.Sprintf("%v:", stock.Name)
-	if stock.PriceArrow == TREND_UP || stock.PriceArrow == TREND_DOWN {
-		buf = buf + fmt.Sprintf(" %v$%0.2f to", trendSymbol[stock.PriceArrow], math.Abs(stock.Price-stock.LastPrice))
-	}
-	buf = buf + fmt.Sprintf(" $%0.2f", stock.Price)
-
-	return buf
-}
-
-func (game *gameData) showStockPrices() {
-	fmt.Print("Stock prices: ")
-	for s, stock := range game.Stocks {
-		if s > 0 {
-			fmt.Print(" -- ")
-		}
-		fmt.Printf(stock.showChange())
-	}
-	fmt.Println()
-}
-
-func (game *gameData) tickStocks() {
-	for s := range game.Stocks {
-		game.Stocks[s].tickStock(game)
-	}
+	return float64(max) * math.Log(1+u) / math.Log(game.getSettingFloat(SET_RANDLOG))
 }
 
 func NumOnly(str string) string {
@@ -88,6 +52,18 @@ func randBool() bool {
 	return rand.Float64() <= 0.5
 }
 
+func roundToCent(price float64) float64 {
+	return (math.Round(price*100) / 100)
+}
+
+func floorToCent(price float64) float64 {
+	return (math.Floor(price*100) / 100)
+}
+
+func roundToDollar(price float64) float64 {
+	return (math.Floor(price*10000) / 10000)
+}
+
 func getTrend(a, b float64) string {
 	if a > b {
 		return trendSymbol[1]
@@ -96,36 +72,4 @@ func getTrend(a, b float64) string {
 	} else {
 		return trendSymbol[0]
 	}
-}
-
-func (game *gameData) promptNumPlayers() {
-	game.NumPlayers = promptForInteger(true, 1, 1, game.getSettingInt(SET_MAXPLAYERS), "How many players?")
-}
-
-func (game *gameData) createPlayerList(numPlayers int) {
-	game.Players = make([]*playerData, numPlayers)
-}
-
-func (game *gameData) showGameStats() {
-	fmt.Print("Game over!\n\nSynopsis:\n")
-	if game.APRHistory[0] < game.APR {
-		fmt.Printf("APR: %v$%0.2f: $%0.2f\n", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
-	} else if game.APR < game.APRHistory[0] {
-		fmt.Printf("APR: %v$%0.2f: $%0.2f\n", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
-	} else {
-		fmt.Printf("APR: %v$%0.2f\n", trendSymbol[0], game.APR)
-	}
-
-	for _, stock := range game.Stocks {
-		if stock.PriceHistory[0] < stock.Price {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
-		} else if stock.Price < stock.PriceHistory[0] {
-			fmt.Printf("%v: %v$%0.2f: $%0.2f\n", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
-		} else {
-			fmt.Printf("%v: %v$%0.2f\n", stock.Name, trendSymbol[0], stock.Price)
-		}
-	}
-
-	game.Week++
-	leaderboard(cData{game: game, player: nil})
 }

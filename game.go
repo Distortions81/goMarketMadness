@@ -6,16 +6,31 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
+	"time"
 )
 
-func (game *gameData) playGame() {
+func (game *gameData) playGame(skip bool) {
 
+	CallClear()
+	if !skip {
+		CallClear()
+		printLn("Byte-99/4U")
+		game.showSplash = true
+		EnterKey(game, "")
+		game.showSplash = false
+
+		CallClear()
+		time.Sleep(time.Millisecond * 500)
+		printLn("Market Madness!")
+		for x := 1; x < 8; x++ {
+			CallBGColor(x)
+			time.Sleep(time.Millisecond * 200)
+		}
+	}
 	game.setup()
 
 	//Game loop
-	for week := range game.NumWeeks {
+	for week := range game.NumWeeks + 1 {
 		game.Week = week + 1
 
 		for p, player := range game.Players {
@@ -23,108 +38,47 @@ func (game *gameData) playGame() {
 				continue
 			}
 			game.showStockPrices()
-			fmt.Printf("\nPlayer #%v: (%v), it is your turn!\n", p+1, player.Name)
+			printfLn("\nPlayer #%v: %v\nIt is your turn!", p+1, player.Name)
 			game.Players[p].processLoans()
-			fmt.Printf("Bank balance: $%0.2f\n", player.Balance)
+			printfLn("Bank balance: $%0.2f", player.Balance)
 			promptForChoice(game, player, mainChoiceMenu)
 		}
 
 		if game.Week == game.NumWeeks {
-			fmt.Println("\n** LAST WEEK!!! ***")
-		} else {
-			fmt.Printf("\n*** WEEK %v of %v has begun! ***\n", game.Week, game.NumWeeks)
+			printLn("** LAST WEEK!!! ***")
+		} else if game.Week < game.NumWeeks {
+			printfLn("*** WEEK %v of %v ***", game.Week, game.NumWeeks)
 		}
 		game.tickStocks()
 		game.tickAPR()
 	}
 
 	game.showGameStats()
-
-	if promptForBool(false, "\nPlay again?") {
-		game.playGame()
-	}
+	game.playGame(skip)
 }
 
-func (game *gameData) setup() {
-
-	if promptForBool(false, "Customize game settings?") {
-		//Init settings if needed
-		if len(game.Settings) == 0 {
-			game.Settings = defSettings
-		}
-
-		//Prompt for each setting
-		for _, item := range game.Settings {
-			if item.Hide {
-				continue
-			}
-			input := promptForString(game.getSettingString(item.ID), 0, 64, false, "%v: (%v):", item.Name, item.DefSetting)
-			game.putSettingString(item.ID, input)
-		}
+func (game *gameData) showGameStats() {
+	printfLn("Game over!\n\nSynopsis:")
+	if game.APRHistory[0] < game.APR {
+		printfLn("APR: %v%0.2f%%: %0.2f", trendSymbol[1], game.APR-game.APRHistory[0], game.APR)
+	} else if game.APR < game.APRHistory[0] {
+		printfLn("APR: %v%0.2f%%: %0.2f", trendSymbol[2], game.APRHistory[0]-game.APR, game.APR)
 	} else {
-		//Use defaults
-		game.Settings = defSettings
+		printfLn("APR: %v%0.2f%%", trendSymbol[0], game.APR)
 	}
 
-	//Prompt to create players
-	numPlayers := len(game.Players)
-	if game.Players == nil {
-		game.promptNumPlayers()
-		game.createPlayerList(game.NumPlayers)
-	} else {
-		if !promptForBool(false, "Play again with same %v players?", numPlayers) {
-			game.promptNumPlayers()
-			game.Players = make([]*playerData, numPlayers)
-		}
-	}
-	oldPlayers := game.Players
-
-	//Create players
-	for p, player := range game.Players {
-		if player == nil {
-			game.Players[p] = &playerData{Number: p + 1}
-			//Transfer old player name, if exists
-			if oldPlayers[p] != nil {
-				game.Players[p].Name = oldPlayers[p].Name
-			}
+	for _, stock := range game.Stocks {
+		if stock.PriceHistory[0] < stock.Price {
+			printfLn("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[1], stock.Price-stock.PriceHistory[0], stock.Price)
+		} else if stock.Price < stock.PriceHistory[0] {
+			printfLn("%v: %v$%0.2f: $%0.2f", stock.Name, trendSymbol[2], stock.PriceHistory[0]-stock.Price, stock.Price)
+		} else {
+			printfLn("%v: %v$%0.2f", stock.Name, trendSymbol[0], stock.Price)
 		}
 	}
 
-	//Init players
-	for p := range game.Players {
-		game.Players[p].Loans = []loanData{}
-		if game.Players[p].Name == "" {
-			//Prompt for name
-			pName := fmt.Sprintf("Player-%v", p+1)
-			game.Players[p].Name = promptForString(pName, 0, game.getSettingInt(SET_MAXNAMELEN), true, "Name for player #%v:", p+1)
-		}
-		//Give starting money
-		game.Players[p].Balance = game.getSettingFloat(SET_STARTMONEY)
-	}
-
-	//Prompt for game length
-	game.NumWeeks = promptForInteger(true, game.getSettingInt(SET_DEFAULT_WEEKS), 4, game.getSettingInt(SET_MAXWEEKS), "How many weeks?")
-
-	//Init stocks
-	game.Stocks = defaultStocks
-	game.StockChoices = []choiceData{}
-	for s := range game.Stocks {
-		//Init stock choice list
-		game.StockChoices = append(game.StockChoices, choiceData{Name: game.Stocks[s].Name})
-
-		startPrice := rand.Float64()*10 + 2
-		game.Stocks[s].TrendPrice = randBool()
-		game.Stocks[s].TrendVolatility = randBool()
-		game.Stocks[s].setPrice(startPrice)
-		game.Stocks[s].LastPrice = game.Stocks[s].Price
-		game.Stocks[s].Volatility = rand.Float64() * game.getSettingFloat(SET_MAXSIG)
-	}
-
-	//Init APR
-	game.APR = game.genLogRand(
-		game.getSettingFloat(SET_MAXAPR) -
-			game.getSettingFloat(SET_MINAPR) +
-			game.getSettingFloat(SET_MINAPR))
-	game.APR = roundToCent(game.APR)
-	game.TrendAPR = randBool()
+	game.Week++
+	leaderboard(cData{game: game, player: nil})
+	EnterKey(game, "")
+	CallClear()
 }

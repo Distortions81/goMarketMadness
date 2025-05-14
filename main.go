@@ -5,18 +5,15 @@
 
 package main
 
-import "fmt"
+import "flag"
 
 func main() {
-	defer fixTerm()
-	handleExit()
-	setupTerm()
 
-	fmt.Print("\033[2J") //Clear screen
-	fmt.Println("Market Madness!")
-	fmt.Println("Press any key to begin.")
-	anyKey()
+	skip := flag.Bool("skip", false, "skip startup animations")
+	flag.Parse()
 
 	newGame := &gameData{Settings: defSettings}
-	newGame.playGame()
+	go newGame.playGame(*skip)
+
+	startEbiten(newGame)
 }

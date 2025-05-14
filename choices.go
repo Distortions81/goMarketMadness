@@ -5,12 +5,6 @@
 
 package main
 
-import (
-	"fmt"
-	"math"
-	"sort"
-)
-
 var mainChoiceMenu []choiceData = []choiceData{
 	{Name: "End turn", ChoiceFunc: endTurn},
 	{Name: "Stocks", Submenu: stockChoices},
@@ -20,10 +14,10 @@ var mainChoiceMenu []choiceData = []choiceData{
 }
 
 var bankChoices []choiceData = []choiceData{
-	{Name: "Diplay loans", ChoiceFunc: displayAllLoans},
+	{Name: "Diplay loans", ChoiceFunc: printLoans},
 	{Name: "Take out a loan", ChoiceFunc: takeLoan},
 	{Name: "Make a payment on a loan", ChoiceFunc: payLoan},
-	{Name: "See account balance", ChoiceFunc: checkBalance},
+	{Name: "See account balance", ChoiceFunc: accBalance},
 	{Name: "Go back"},
 }
 
@@ -56,143 +50,4 @@ type leaderData struct {
 	BankVal  float64
 	Debts    float64
 	NetWorth float64
-}
-
-func leaderboard(data cData) bool {
-	var leaderBoard []leaderData
-	for _, player := range data.game.Players {
-		tmp := leaderData{Name: player.Name}
-
-		stockVal := 0.0
-		for _, stock := range player.Stocks {
-			stockVal += roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
-		}
-		tmp.StockVal = stockVal
-
-		debts := 0.0
-		for _, loan := range player.Loans {
-			debts += loan.Principal
-		}
-		tmp.Debts = debts
-		tmp.BankVal = player.Balance
-
-		netWorth := stockVal + player.Balance - debts
-		tmp.NetWorth = netWorth
-		leaderBoard = append(leaderBoard, tmp)
-	}
-
-	sort.Slice(leaderBoard, func(i, j int) bool {
-		return leaderBoard[i].NetWorth > leaderBoard[j].NetWorth
-	})
-
-	fmt.Println("\nLeaderboard:")
-	for v, victim := range leaderBoard {
-		fmt.Printf("#%v -- %v: Stocks: %v, Bank: %v, Debts: %v, Net: %v\n",
-			v+1, victim.Name, victim.StockVal, victim.BankVal, victim.Debts, victim.NetWorth)
-	}
-
-	if data.game.Week == data.game.NumWeeks+1 {
-		fmt.Printf("\n%v won the game!\n", leaderBoard[0].Name)
-	}
-	return false
-}
-
-func leaveTable(data cData) bool {
-	fmt.Printf("Player #%v: (%v) has left the game.\n", data.player.Number, data.player.Name)
-	data.player.Gone = true
-	return true
-}
-
-func endTurn(data cData) bool {
-	fmt.Printf("Player #%v: (%v) has ended their turn.\n", data.player.Number, data.player.Name)
-	return true
-}
-
-func buyShares(data cData) bool {
-	fmt.Printf("\nBuy shares of which stock?\n")
-
-	//Print stock list
-	maxLen := 0
-	for _, stock := range data.game.Stocks {
-		maxLen = maxInt(maxLen, len(stock.Name))
-	}
-	for s, stock := range data.game.Stocks {
-		fmt.Printf("%v) %*v -- $%0.2f\n", s+1, maxLen, stock.Name, stock.Price)
-	}
-
-	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Buy which stock?")
-	choice -= 1
-	maxAfford := math.Floor(data.player.Balance / data.game.Stocks[choice].Price)
-	maxAfford = floorToCent(maxAfford)
-	if maxAfford < 1 {
-		fmt.Printf("You can't afford to buy any shares.")
-		return false
-	}
-
-	maxBuy := math.Min(data.game.getSettingFloat(SET_MAXSHARES), maxAfford)
-	suggest := math.Min(10, maxBuy)
-
-	numShares := promptForInteger(true, int(suggest), 1, int(maxBuy), "How many shares?")
-	dollarValue := roundToCent(data.game.Stocks[choice].Price * float64(numShares))
-	checkBalance(data)
-	if promptForBool(false, "Buy %v shares of %v for $%0.2f?", numShares, data.game.Stocks[choice].Name, dollarValue) {
-		data.player.debit(dollarValue)
-		fmt.Printf("Debit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
-		data.player.creditStock(data.game, choice, numShares)
-	}
-	return false
-}
-
-func sellShares(data cData) bool {
-	fmt.Printf("\nSell shares of which stock?\n")
-
-	//Print stock list
-	maxLen := 0
-	for _, stock := range data.player.Stocks {
-		if stock.Shares <= 0 {
-			continue
-		}
-		maxLen = maxInt(maxLen, len(stock.Name))
-	}
-	for s, stock := range data.player.Stocks {
-		if stock.Shares <= 0 {
-			continue
-		}
-		dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(stock.Shares))
-		fmt.Printf("%v) %*v -- (%v shares) $%0.2f\n", s+1,
-			maxLen, stock.Name, stock.Shares, dollarValue)
-	}
-
-	choice := promptForInteger(false, 1, 1, len(data.game.Stocks), "Sell which stock?")
-	choice -= 1
-	stock := data.player.Stocks[choice]
-	suggest := min(10, float64(stock.Shares))
-	numShares := promptForInteger(true, int(suggest), 1, int(stock.Shares), "How many shares?")
-	dollarValue := roundToCent(data.game.Stocks[stock.StockID].Price * float64(numShares))
-	if promptForBool(false, "Sell %v shares of %v for $%0.2f?", numShares, stock.Name, dollarValue) {
-		data.player.credit(dollarValue)
-		fmt.Printf("Credit: $%0.2f, New balance: $%0.2f\n", dollarValue, data.player.Balance)
-		data.player.debitStock(stock.StockID, numShares)
-	}
-	return false
-}
-
-func displayShares(data cData) bool {
-
-	count := 0
-	fmt.Println()
-	for _, stock := range data.player.Stocks {
-		if stock.Shares <= 0 {
-			continue
-		}
-		fmt.Printf("Stock %v, %v shares. Current value: $%0.2f",
-			stock.Name, stock.Shares, float64(stock.Shares)*data.game.Stocks[stock.StockID].Price)
-		count++
-	}
-
-	if count == 0 {
-		fmt.Println("You don't have any stock shares at the moment.")
-	}
-	fmt.Println()
-	return false
 }

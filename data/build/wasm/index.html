@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>Byte-99/4U: Market Madness!</title>
+        <meta charset="utf-8"/>
+        <script src="wasm_exec.js"></script>
+        <script>
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("start.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            });
+        </script>
+    </head>
+    <body>NOTE: This app does not work on mobile.</body>
+</html>
