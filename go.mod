@@ -1,6 +1,7 @@
 module goMarketMadness
 
-go 1.23.1
+go 1.26.6
+toolchain go1.26.6
 
 require github.com/hajimehoshi/ebiten/v2 v2.8.0
 
